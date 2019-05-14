@@ -7,5 +7,19 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stephenobaker/see-whos-home.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stephenobaker/see-whos-home/issues"
+  },
+  "homepage": "https://github.com/stephenobaker/see-whos-home#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.1.0",
+    "@babel/core": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0"
+  }
 }
