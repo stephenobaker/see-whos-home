@@ -2,23 +2,31 @@ import React, { Component} from "react";
 import {hot} from "react-hot-loader";
 import "./App.css";
 
-function formatName(user) {
-	return user.firstName + " " + user.lastName;
+function Welcome(props) {
+	return <h1 className="Welcome">Hello, {props.name}</h1>
 }
 
-const user = {
-	firstName: "Charlie",
-	lastName: "Smith"
-};
-
-class App extends Component{
-  render(){
-    return(
-      <div className="App">
-        <h1> Hello {formatName(user)}! </h1>
-      </div>
-    );
-  }
+function App() {
+  return(
+    <div className="App">
+      <Welcome name="Sara" />
+      <Welcome name="Kyle" />
+      <Welcome name="Billy" />
+    </div>
+  );
 }
+
+
+// class App extends Component{
+//   render(){
+//     return(
+//       <div className="App">
+//         <Welcome name="Sara" />
+//         <Welcome name="Chad" />
+//       </div>
+//     );
+//   }
+// }
+
 
 export default hot(module)(App);
