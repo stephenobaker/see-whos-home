@@ -15,11 +15,6 @@
   "bugs": {
     "url": "https://github.com/stephenobaker/see-whos-home/issues"
   },
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
-  },
   "homepage": "https://github.com/stephenobaker/see-whos-home#readme",
   "devDependencies": {
     "@babel/cli": "^7.1.0",
