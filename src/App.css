@@ -2,3 +2,8 @@
   margin: 1rem;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.Welcome {
+	border: red;
+	color: red;
+}
