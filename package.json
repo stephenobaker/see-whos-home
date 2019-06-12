@@ -34,7 +34,6 @@
     "jasmine-enzyme": "^7.0.2",
     "jsdom": "^15.1.1",
     "style-loader": "^0.23.0",
-    "tailwindcss": "^1.0.4",
     "webpack": "^4.19.1",
     "webpack-cli": "^3.3.4",
     "webpack-dev-server": "^3.7.1"
