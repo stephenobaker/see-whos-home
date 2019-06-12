@@ -39,8 +39,10 @@
     "webpack-dev-server": "^3.7.1"
   },
   "dependencies": {
+    "firebase": "^6.1.1",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
-    "react-hot-loader": "^4.3.11"
+    "react-hot-loader": "^4.3.11",
+    "react-with-firebase-auth": "^1.0.3"
   }
 }
