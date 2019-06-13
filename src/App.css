@@ -1,9 +1,19 @@
-.App {
+.app-global {
   margin: 1rem;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.Welcome {
+.nav-bar {
 	border: red;
 	color: red;
+}
+
+.button {
+	width: 100px;
+	height: 40px;
+
+}
+
+.red {
+	box-shadow: 5px 5px 4px black;
 }
