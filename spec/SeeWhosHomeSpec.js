@@ -3,7 +3,7 @@
 
 describe('Sign-In Button', function() {
 	it('should exist', function() {
-		expect(document.querySelector('.red')).toBeDefined()
+		expect(document.querySelector('.button')).not.toBeNull()
 	});
 });
 
