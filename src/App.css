@@ -1,19 +1,38 @@
+
+:root {
+	--primary-bold: blue;
+	--primary-light: lightblue;
+}
+
 .app-global {
-  margin: 1rem;
   font-family: Arial, Helvetica, sans-serif;
 }
 
 .nav-bar {
-	border: red;
-	color: red;
+	background-color: var(--primary-light);
+	color: var(--primary-bold);
+}
+
+.logo {
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+.user-picture {
+	height: 40px;
+	width: 40px;
+	border-radius: 20px;
 }
 
 .button {
-	width: 100px;
-	height: 40px;
-
+	border-width: 1px;
+	border-color: var(--primary-bold);
+	color: var(--primary-bold);
+	background-color: var(--primary-light);
+	height: 36px;
 }
 
-.red {
-	box-shadow: 5px 5px 4px black;
+.public-list {
+	background-color: var(--primary-light);
+	color: var(--primary-bold);
 }
