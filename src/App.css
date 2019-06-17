@@ -1,7 +1,7 @@
 
 :root {
-	--primary-bold: blue;
-	--primary-light: lightblue;
+	--primary-bold: white;
+	--primary-light: black;
 }
 
 .app-global {
@@ -22,6 +22,9 @@
 	height: 40px;
 	width: 40px;
 	border-radius: 20px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: var(--primary-bold);
 }
 
 .button {
@@ -30,6 +33,40 @@
 	color: var(--primary-bold);
 	background-color: var(--primary-light);
 	height: 36px;
+}
+
+.button:hover {
+	color: red;
+}
+
+.border-margin {
+	border-width: 1px;
+	border-color: var(--primary-light);
+	border-style: solid;
+	margin: 2em;
+}
+
+.console-container {
+	max-width: 800px;
+	margin: auto;
+}
+
+.tab {
+	border-width: 2px;
+	border-color: var(--primary-light);
+}
+
+.tab.live {
+	border-style: solid solid none solid;
+}
+
+.tab.dead {
+	border-style: solid;
+}
+
+.tab.bottom {
+	border-style: none solid solid solid;
+	min-height: 400px;
 }
 
 .public-list {
