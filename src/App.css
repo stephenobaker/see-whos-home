@@ -2,6 +2,7 @@
 :root {
 	--primary-bold: white;
 	--primary-light: black;
+	--primary-radius: 15px;
 }
 
 .app-global {
@@ -58,10 +59,14 @@
 
 .tab.live {
 	border-style: solid solid none solid;
+	border-radius: var(--primary-radius) var(--primary-radius) 0 0;
+
 }
 
 .tab.dead {
 	border-style: solid;
+	border-radius: var(--primary-radius) var(--primary-radius) 0 0;
+
 }
 
 .tab.bottom {
