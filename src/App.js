@@ -33,7 +33,10 @@ var database = firebase.database();
 class SignInButtons extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {authUser: null};
+		this.state = {
+			authUser: null,
+			waiting: true
+		};
 		this.signIn = this.signIn.bind(this);
 		this.signOut = this.signOut.bind(this);
 	}
@@ -47,6 +50,7 @@ class SignInButtons extends React.Component {
 		  var email = error.email;
 		  var credential = error.credential;
 		});
+		this.setState({waiting: true})
 	}
 	signOut() {
 		firebase.auth().signOut();
@@ -54,27 +58,45 @@ class SignInButtons extends React.Component {
 	componentDidMount() {
 		firebase.auth().onAuthStateChanged(user => {
 			if (user) {
-					this.setState({authUser: user});
+					this.setState({
+						authUser: user,
+						waiting: null
+					});
 					console.log('you signed in');
 			} else {
-					this.setState({authUser: null});
+					this.setState({
+						authUser: null,
+						waiting: null
+					});
 					console.log('you signed out');
 			}
 		});
 	}
 	render() {
-		if(this.state.authUser) {
-			return (
-					<div className="d-inline-flex align-items-center flex-column flex-sm-row">
-						<div className="d-flex m-2" id="userWelcome">Welcome, {firebase.auth().currentUser.displayName}!</div>
-						<img className="d-flex user-picture m-2" id="userPicture" src={firebase.auth().currentUser.photoURL}/>
-						<button className="d-flex button m-2" id="signOut" onClick={this.signOut}>Sign Out</button>
-					</div>
+		if(this.state.waiting) {
+			return(
+				<div>Waiting...</div>
 			);
-		}	else {
-			return (
-				<button className="d-flex button m-2" id="signIn" onClick={this.signIn}>Sign In with Google</button>
-			);
+
+		} else {
+
+
+
+
+			if(this.state.authUser) {
+				return(
+						<div className="d-inline-flex align-items-center flex-column flex-sm-row">
+							<div className="d-flex m-2" id="userWelcome">Welcome, {firebase.auth().currentUser.displayName}!</div>
+							<img className="d-flex user-picture m-2" id="userPicture" src={firebase.auth().currentUser.photoURL}/>
+							<button className="d-flex button m-2" id="signOut" onClick={this.signOut}>Sign Out</button>
+						</div>
+				);
+			}	else {
+				return(
+					<button className="d-flex button m-2" id="signIn" onClick={this.signIn}>Sign In with Google</button>
+				);
+			}
+
 		}
 	}
 }
