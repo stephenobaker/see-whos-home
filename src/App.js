@@ -26,6 +26,10 @@ var provider = new firebase.auth.GoogleAuthProvider();
 var database = firebase.database();
 
 
+
+
+
+
 class SignInButtons extends React.Component {
 	constructor(props) {
 		super(props);
@@ -76,6 +80,10 @@ class SignInButtons extends React.Component {
 }
 
 
+
+
+
+
 function NavigationBar(props) {
 	return(
 		<nav className="nav-bar row d-flex align-items-center justify-content-center justify-content-sm-between flex-column flex-sm-row">
@@ -84,6 +92,10 @@ function NavigationBar(props) {
 		</nav>
 	);
 }
+
+
+
+
 
 
 class CreateNewCycle extends React.Component {
@@ -105,17 +117,14 @@ class CreateNewCycle extends React.Component {
 				{this.state.firstCycle ? (
 					<div>
 						<div className="col-12 d-flex justify-content-center">
-							<button className = "button" onClick={this.handleForward}>
-								Create a new {this.props.buttonTitle}
-							</button>
+							<button className = "button m-4" onClick={this.handleForward}>Create a new {this.props.buttonTitle}</button>
 						</div>
 					</div>
 				) : (
 					<div>
 						<div className="col-12 d-flex justify-content-center">
-							<button className = "button" onClick={this.handleBackward}>
-								Go back.
-							</button>
+							<button className = "button m-4" onClick={this.handleBackward}>Go back</button>
+							<button className = "button m-4">Create new Market!</button>
 						</div>
 					</div>
 				)}
@@ -123,6 +132,10 @@ class CreateNewCycle extends React.Component {
 		);
 	}
 }
+
+
+
+
 
 
 class TabbedContainer extends React.Component {
@@ -143,6 +156,10 @@ class TabbedContainer extends React.Component {
 		);
 	}
 }
+
+
+
+
 
 
 function App() {
