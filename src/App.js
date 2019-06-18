@@ -175,21 +175,61 @@ class CreateNewCycle extends React.Component {
 class TabbedContainer extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {isFirstTab: true};
+		this.goFirstTab = this.goFirstTab.bind(this);
+		this.goSecondTab = this.goSecondTab.bind(this);
 	}
+
+	goFirstTab() {
+		this.setState({isFirstTab: true});
+	}
+
+	goSecondTab() {
+		this.setState({isFirstTab: false});
+	}
+
 	render() {
-		return(
-			<div>
-				<div className="p-2 p-sm-4 console-container">	
-					<div className="row flex-row d-flex">
-						<div className="tab live col-6 d-flex justify-content-center align-items-center">Markets you manage</div>
-						<div className="tab dead col-6 d-flex justify-content-center align-items-center">Markets you sell at</div>
+		const isFirstTab = this.state.isFirstTab;
+		let cycleOne = <CreateNewCycle buttonTitle='Create New Market' />;
+		let cycleTwo = <CreateNewCycle buttonTitle='Join New Market' />;
+		let cycleContainer;
+
+		if (isFirstTab) {
+			cycleContainer = (
+				<div>
+					<div>
+						{cycleOne}
 					</div>
-					<CreateNewCycle buttonTitle='Market Space'/>
+					<div className="d-none">
+						{cycleTwo}
+					</div>
 				</div>
+			);
+		} else {
+			cycleContainer = (
+				<div>
+					<div className="d-none">
+						{cycleOne}
+					</div>
+					<div>
+						{cycleTwo}
+					</div>
+				</div>
+			); 
+		}
+
+		return (
+			<div className="p-2 p-sm-4 console-container">	
+				<div className="row flex-row d-flex">
+					<button className={`tab ${(isFirstTab ? 'live' : 'dead')} col-6 d-flex justify-content-center align-items-center`} onClick={this.goFirstTab}>Markets you manage</button>
+					<button className={`tab ${(isFirstTab ? 'dead' : 'live')} col-6 d-flex justify-content-center align-items-center`} onClick={this.goSecondTab}>Markets you sell at</button>
+				</div>
+				{cycleContainer}
 			</div>
-		);
+		);		
 	}
 }
+
 
 
 
@@ -201,7 +241,6 @@ function App() {
     <div className="container-fluid app-global">
       <NavigationBar />
       <TabbedContainer />
-      <div id='testFirebaseTarget'/>
     </div>
   );
 }
