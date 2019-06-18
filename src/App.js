@@ -30,7 +30,7 @@ var database = firebase.database();
 
 
 
-class SignInButtons extends React.Component {
+class FirebaseLogin extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -62,20 +62,18 @@ class SignInButtons extends React.Component {
 						authUser: user,
 						waiting: null
 					});
-					console.log('you signed in');
 			} else {
 					this.setState({
 						authUser: null,
 						waiting: null
 					});
-					console.log('you signed out');
 			}
 		});
 	}
 	render() {
 		if(this.state.waiting) {
 			return(
-				<div>Waiting...</div>
+				<div className="p-2">Waiting...</div>
 			);
 
 		} else {
@@ -110,7 +108,7 @@ function NavigationBar(props) {
 	return(
 		<nav className="nav-bar row d-flex align-items-center justify-content-center justify-content-sm-between flex-column flex-sm-row">
 			<div className="logo d-flex align-items-center col-auto mr-sm-auto">Who's at the Market?</div>
-			<SignInButtons />
+			<FirebaseLogin />
 		</nav>
 	);
 }
