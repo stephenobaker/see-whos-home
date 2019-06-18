@@ -123,35 +123,47 @@ function NavigationBar(props) {
 class CreateNewCycle extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {firstCycle: true};
+		this.state = {isFirstCycle: true};
 		this.handleForward = this.handleForward.bind(this);
 		this.handleBackward = this.handleBackward.bind(this);
 	}
+	
 	handleForward() {
-		this.setState({firstCycle: false});
+		this.setState({isFirstCycle: false});
 	}
+	
 	handleBackward() {
-		this.setState({firstCycle: true});
+		this.setState({isFirstCycle: true});
 	}
+	
 	render() {
-		return(
-				<div className="tab bottom row d-flex justify-content-center align-items-center">
-				{this.state.firstCycle ? (
-					<div>
-						<div className="col-12 d-flex justify-content-center">
-							<button className = "button m-4" onClick={this.handleForward}>Create a new {this.props.buttonTitle}</button>
-						</div>
-					</div>
-				) : (
-					<div>
-						<div className="col-12 d-flex justify-content-center">
-							<button className = "button m-4" onClick={this.handleBackward}>Go back</button>
-							<button className = "button m-4">Create new Market!</button>
-						</div>
-					</div>
-				)}
+		const isFirstCycle = this.state.isFirstCycle;
+		let content;
+		let buttons;
+
+		if (isFirstCycle) {
+			content = <div className="row d-flex">This is a component that shows data if database, lists areas in either member or manager view, otherwise asks if you want to create one.</div>;
+			buttons = (
+				<div className="row d-flex">	
+					<button className = "button m-4" onClick={this.handleForward}>Create a new {this.props.buttonTitle}</button>
+				</div>
+			);
+		} else {
+			content = <div className ="row d-flex">This should render an input field object</div>;
+			buttons = (
+				<div className="row d-flex">
+					<button className = "button m-4" onClick={this.handleBackward}>Go back</button>
+					<button className = "button m-4">Create new Market!</button>
+				</div>
+			);
+		}
+
+		return (
+			<div className="tab bottom row d-flex justify-content-center align-items-center">
+				{content}
+				{buttons}
 			</div>
-		);
+		);	
 	}
 }
 
