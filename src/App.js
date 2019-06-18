@@ -8,7 +8,6 @@ var firebase = require('firebase/app');
 require('firebase/auth');
 require('firebase/database');
 
-let marketsYouManage = false;
 
 //For development only. This won't be needed when app is served via Firebase Hosting as custom URL's will be faster
 firebase.initializeApp({
@@ -27,71 +26,6 @@ var provider = new firebase.auth.GoogleAuthProvider();
 var database = firebase.database();
 
 
-function signIn() {
-	firebase.auth().signInWithRedirect(provider).then(function(result) {
-	  // This gives you a Google Access Token. You can use it to access the Google API.
-	  var token = result.credential.accessToken;
-	  // The signed-in user info.
-	  var user = result.user;
-	  // ...
-	}).catch(function(error) {
-	  // Handle Errors here.
-	  var errorCode = error.code;
-	  var errorMessage = error.message;
-	  // The email of the user's account used.
-	  var email = error.email;
-	  // The firebase.auth.AuthCredential type that was used.
-	  var credential = error.credential;
-	  // ...
-	});
-};
-
-function signOut() {
-	firebase.auth().signOut();
-	document.querySelector('#tempWaitMsg').classList.remove('d-none');
-
-}
-
-firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
-    // User is signed in.
-  //   document.querySelector('#signOut').classList.remove('d-none');
-  //   document.querySelector('#signIn').classList.add('d-none')
-  //   document.querySelector('#userWelcome').innerHTML = 'Hi, ' + user.displayName + '!';
-  //   document.querySelector('#userWelcome').classList.add('d-sm-block');
-  //   document.querySelector('#userPicture').setAttribute('src', user.photoURL);
-  //   document.querySelector('#userPicture').classList.remove('d-none');
-  //   document.querySelector('#tempWaitMsg').classList.add('d-none');
-  console.log('user signed in');
-
-
-
-  } else {
-    // No user is signed in.
-    // document.querySelector('#signIn').classList.remove('d-none');
-    // document.querySelector('#signOut').classList.add('d-none')
-    // document.querySelector('#userWelcome').classList.remove('d-sm-block');
-    // document.querySelector('#userPicture').classList.add('d-none');
-    // document.querySelector('#tempWaitMsg').classList.add('d-none');
-    console.log('user signed out');
-  }
-});
-
-
-
-function TestFirebaseAction() {
-	return(
-		<div>firebaseD</div>
-	);
-}
-
-
-
-
-
-
-
-
 class SignInButtons extends React.Component {
 	constructor(props) {
 		super(props);
@@ -99,7 +33,6 @@ class SignInButtons extends React.Component {
 		this.signIn = this.signIn.bind(this);
 		this.signOut = this.signOut.bind(this);
 	}
-
 	signIn() {
 		firebase.auth().signInWithRedirect(provider).then(function(result) {
 		  var token = result.credential.accessToken;
@@ -111,90 +44,46 @@ class SignInButtons extends React.Component {
 		  var credential = error.credential;
 		});
 	}
-
 	signOut() {
 		firebase.auth().signOut();
 	}
-
 	componentDidMount() {
-		firebase.auth().onAuthStateChanged(authUser => {
-			authUser
-				? this.setState({authUser})
-				: this.setState({authUser: null});
+		firebase.auth().onAuthStateChanged(user => {
+			if (user) {
+					this.setState({authUser: user});
+					console.log('you signed in');
+			} else {
+					this.setState({authUser: null});
+					console.log('you signed out');
+			}
 		});
 	}
-
 	render() {
-		if (this.state.authUser) {
+		if(this.state.authUser) {
 			return (
-				<button className="button m-2" id="signOut" onClick={this.signOut}>Sign Out</button>
+					<div className="d-inline-flex align-items-center flex-column flex-sm-row">
+						<div className="d-flex m-2" id="userWelcome">Welcome, {firebase.auth().currentUser.displayName}!</div>
+						<img className="d-flex user-picture m-2" id="userPicture" src={firebase.auth().currentUser.photoURL}/>
+						<button className="d-flex button m-2" id="signOut" onClick={this.signOut}>Sign Out</button>
+					</div>
 			);
-		} else {
+		}	else {
 			return (
-				<button className="button m-2" id="signIn" onClick={this.signIn}>Sign In with Google</button>
+				<button className="d-flex button m-2" id="signIn" onClick={this.signIn}>Sign In with Google</button>
 			);
 		}
-		
 	}
 }
-
-
-
-
-
 
 
 function NavigationBar(props) {
 	return(
-		//<div className="container-fluid">
 		<nav className="nav-bar row d-flex align-items-center justify-content-center justify-content-sm-between flex-column flex-sm-row">
 			<div className="logo d-flex align-items-center col-auto mr-sm-auto">Who's at the Market?</div>
-			<div className="d-inline-flex align-items-center flex-column flex-sm-row">
-				<div id="tempWaitMsg" className="m-2">Signing in...</div>
-				<div className="d-none m-2" id="userWelcome"></div>
-				<img className="d-none user-picture m-2" id="userPicture" src={''}/>
-				<SignInButtons />
-			</div>
+			<SignInButtons />
 		</nav>
-		//</div>
 	);
 }
-
-
-
-class RenderItems extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {hasItems: false};
-	}
-
-	componentDidMount() {
-
-		if (marketsYouManage === true) {
-			this.setState({hasItems: true});
-		} else {
-			this.setState({hasItems: false});
-		}
-	}
-
-	render() {
-		return(
-			<div className="col-12 d-flex justify-content-center">
-				{(this.state.hasItems === true) ? (
-						<em>
-							You do have items in a list!
-						</em>
-				) : (
-						<em>
-							It looks like you don't manage any markets. Would you like to create a new one?
-						</em>
-				)}
-			</div>
-		);
-	}
-}
-
-						
 
 
 class CreateNewCycle extends React.Component {
@@ -204,21 +93,17 @@ class CreateNewCycle extends React.Component {
 		this.handleForward = this.handleForward.bind(this);
 		this.handleBackward = this.handleBackward.bind(this);
 	}
-
 	handleForward() {
 		this.setState({firstCycle: false});
 	}
-
 	handleBackward() {
 		this.setState({firstCycle: true});
 	}
-
 	render() {
 		return(
 				<div className="tab bottom row d-flex justify-content-center align-items-center">
 				{this.state.firstCycle ? (
 					<div>
-						<RenderItems />
 						<div className="col-12 d-flex justify-content-center">
 							<button className = "button" onClick={this.handleForward}>
 								Create a new {this.props.buttonTitle}
@@ -240,13 +125,10 @@ class CreateNewCycle extends React.Component {
 }
 
 
-
-
 class TabbedContainer extends React.Component {
 	constructor(props) {
 		super(props);
 	}
-
 	render() {
 		return(
 			<div>
@@ -261,10 +143,6 @@ class TabbedContainer extends React.Component {
 		);
 	}
 }
-
-
-
-
 
 
 function App() {
