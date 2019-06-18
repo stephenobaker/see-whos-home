@@ -27,6 +27,22 @@ var database = firebase.database();
 
 
 
+function SignInButtons(props) {
+
+}
+
+
+
+
+function NavigationBar(props) {
+	return(
+		<nav className="nav-bar row d-flex align-items-center justify-content-center justify-content-sm-between flex-column flex-sm-row">
+			<div className="logo d-flex align-items-center col-auto mr-sm-auto">Who's at the Market?</div>
+			<FirebaseLogin />
+		</nav>
+	);
+}
+
 
 
 
@@ -40,6 +56,7 @@ class FirebaseLogin extends React.Component {
 		this.signIn = this.signIn.bind(this);
 		this.signOut = this.signOut.bind(this);
 	}
+
 	signIn() {
 		firebase.auth().signInWithRedirect(provider).then(function(result) {
 		  var token = result.credential.accessToken;
@@ -52,9 +69,11 @@ class FirebaseLogin extends React.Component {
 		});
 		this.setState({waiting: true})
 	}
+
 	signOut() {
 		firebase.auth().signOut();
 	}
+
 	componentDidMount() {
 		firebase.auth().onAuthStateChanged(user => {
 			if (user) {
@@ -70,6 +89,7 @@ class FirebaseLogin extends React.Component {
 			}
 		});
 	}
+
 	render() {
 		if(this.state.waiting) {
 			return(
@@ -97,20 +117,6 @@ class FirebaseLogin extends React.Component {
 
 		}
 	}
-}
-
-
-
-
-
-
-function NavigationBar(props) {
-	return(
-		<nav className="nav-bar row d-flex align-items-center justify-content-center justify-content-sm-between flex-column flex-sm-row">
-			<div className="logo d-flex align-items-center col-auto mr-sm-auto">Who's at the Market?</div>
-			<FirebaseLogin />
-		</nav>
-	);
 }
 
 
