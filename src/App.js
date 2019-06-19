@@ -31,20 +31,45 @@ function SignInButtons(props) {
 
 }
 
+//Okay, cool. This works. You'll be able to pass state as props on child elements and put the whole thing inside FirebaseLogin (soon to be App) component
+class PassageTestParent extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			color: 'blue',
+			weather: 'groovy',
+			feels: 'cold'
+		};
+		this.clickit = this.clickit.bind(this);
+	}
 
+	clickit() {
+		this.setState({
+			color: 'groovy',
+			weather: 'cold',
+			feels: 'blue'
+		});
+	}
 
+	render() {
+		return (
+			<div>
+				<button onClick={this.clickit}>Click it</button>
+				<PassageTestChild {...this.state} />
+			</div>
+		);
+	}
+}
 
-function NavigationBar(props) {
-	return(
-		<nav className="nav-bar row d-flex align-items-center justify-content-center justify-content-sm-between flex-column flex-sm-row">
-			<div className="logo d-flex align-items-center col-auto mr-sm-auto">Who's at the Market?</div>
-			<FirebaseLogin />
-		</nav>
-	);
+function PassageTestChild(props) {
+	return <div>The light is {props.color}, the weather is {props.weather}, and I'm feeling {props.feels}!</div>
 }
 
 
 
+
+
+//TODO: This will eventually be the App complete parent component, since all rendering logic depends on Login state
 
 class FirebaseLogin extends React.Component {
 	constructor(props) {
@@ -91,31 +116,40 @@ class FirebaseLogin extends React.Component {
 	}
 
 	render() {
-		if(this.state.waiting) {
-			return(
-				<div className="p-2">Waiting...</div>
-			);
+		const isWaiting = this.state.waiting;
+		const isLoggedIn = this.state.authUser;
+		let signInSpan;
 
+
+
+		if (isWaiting) {
+			signInSpan = <div className="p-2">Waiting...</div>;
 		} else {
-
-
-
-
-			if(this.state.authUser) {
-				return(
-						<div className="d-inline-flex align-items-center flex-column flex-sm-row">
-							<div className="d-flex m-2" id="userWelcome">Welcome, {firebase.auth().currentUser.displayName}!</div>
-							<img className="d-flex user-picture m-2" id="userPicture" src={firebase.auth().currentUser.photoURL}/>
-							<button className="d-flex button m-2" id="signOut" onClick={this.signOut}>Sign Out</button>
-						</div>
+			if (isLoggedIn) {
+				signInSpan = (
+					<div className="d-inline-flex align-items-center flex-column flex-sm-row">
+						<div className="d-flex m-2" id="userWelcome">Welcome, {isLoggedIn.displayName}!</div>
+						<img className="d-flex user-picture m-2" id="userPicture" src={isLoggedIn.photoURL}/>
+						<button className="d-flex button m-2" id="signOut" onClick={this.signOut}>Sign Out</button>
+					</div>
 				);
-			}	else {
-				return(
+			} else {
+				signInSpan = (
 					<button className="d-flex button m-2" id="signIn" onClick={this.signIn}>Sign In with Google</button>
 				);
 			}
-
 		}
+
+
+
+		return (
+			<nav className="nav-bar row d-flex align-items-center justify-content-center justify-content-sm-between flex-column flex-sm-row">
+				<div className="logo d-flex align-items-center col-auto mr-sm-auto">Who's at the Market?</div>
+				{signInSpan}
+			</nav>
+		);
+
+
 	}
 }
 
@@ -237,13 +271,14 @@ class TabbedContainer extends React.Component {
 
 
 
-
+//TODO: This will eventualy just have FirebaseLogin component, (or rather FirebaseLogin will be renamed App and replace this as a class declaration)
 
 
 function App() {
   return(
     <div className="container-fluid app-global">
-      <NavigationBar />
+      <FirebaseLogin />
+      <PassageTestParent />
       <TabbedContainer />
     </div>
   );
