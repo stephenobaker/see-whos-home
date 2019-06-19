@@ -27,49 +27,168 @@ var database = firebase.database();
 
 
 
-function SignInButtons(props) {
 
+function WaitingMessage(props) {
+	if (props.isWaiting) {
+		return <div className="p-2">{props.message}</div>;
+	} else {
+		return null;
+	}
 }
 
-//Okay, cool. This works. You'll be able to pass state as props on child elements and put the whole thing inside FirebaseLogin (soon to be App) component
-class PassageTestParent extends React.Component {
+function UserPicture(props) {
+	if (props.isLoggedIn) {
+		return <img className="user-picture m-2" src={props.isLoggedIn.photoURL} />;
+	} else {
+		return null;
+	}
+}
+
+function UserWelcome(props) {
+	if (props.isLoggedIn) {
+		return <div className="m-2">Welcome, {props.isLoggedIn.displayName}!</div>;
+	} else {
+		return null;
+	}
+}
+
+function NavButton(props) {
+	return <button className="button m-2" onClick={props.buttonAction}>{props.buttonName}</button>;
+}
+
+function SignInButtonSpan(props) {
+	if (!props.isWaiting) {
+		if (!props.isLoggedIn) {
+			return <NavButton buttonAction={props.signIn} buttonName='Sign in with Google' />;
+		} else {
+			return <NavButton buttonAction={props.signOut} buttonName='Sign out' />;
+		}		
+	} else {
+		return null;
+	}
+}
+
+
+function NavigationBar(props) {
+	const isWaiting = props.isWaiting;
+	const isLoggedIn = props.isLoggedIn;
+	const signIn = props.signIn;
+	const signOut = props.signOut;
+
+	return (
+		<nav className="nav-bar row d-flex align-items-center justify-content-center justify-content-md-between flex-column flex-md-row">
+			<div className="logo align-items-center col-auto mr-md-auto">Who's at the Market?</div>
+			<WaitingMessage isWaiting={isWaiting} message='Waiting...' />
+			<UserWelcome isLoggedIn={isLoggedIn} />
+			<UserPicture isLoggedIn={isLoggedIn} />
+			<SignInButtonSpan isWaiting={isWaiting} isLoggedIn={isLoggedIn} signIn={signIn} signOut={signOut} />			
+		</nav>
+	);
+}
+
+
+
+
+
+class CreateNewCycle extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			color: 'blue',
-			weather: 'groovy',
-			feels: 'cold'
-		};
-		this.clickit = this.clickit.bind(this);
+		this.state = {isFirstCycle: true};
+		this.handleForward = this.handleForward.bind(this);
+		this.handleBackward = this.handleBackward.bind(this);
+	}
+	
+	handleForward() {
+		this.setState({isFirstCycle: false});
+	}
+	
+	handleBackward() {
+		this.setState({isFirstCycle: true});
+	}
+	
+	render() {
+		const isFirstCycle = this.state.isFirstCycle;
+		const tabIsLive = this.props.tabIsLive;
+		let content;
+		let buttons;
+
+		if (isFirstCycle) {
+			content = <div className="col-12">This is a component that shows data if database, lists areas in either member or manager view, otherwise asks if you want to create one.</div>;
+			buttons = (
+				<div className="col-12">	
+					<button className = "button m-4" onClick={this.handleForward}>Create a new {this.props.buttonTitle}</button>
+				</div>
+			);
+		} else {
+			content = <div className ="row">This should render an input field object</div>;
+			buttons = (
+				<div className="row d-flex">
+					<button className = "button m-4" onClick={this.handleBackward}>Go back</button>
+					<button className = "button m-4">Create new Market!</button>
+				</div>
+			);
+		}
+
+		return (tabIsLive ? (
+
+			
+				<div className="tab bottom row d-flex justify-content-center align-items-center">
+					{content}
+					{buttons}
+				</div>
+			
+
+		) : (
+
+			 null
+
+		));
+		
+	}
+}
+
+
+
+
+
+
+class TabbedContainer extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {isFirstTab: true};
+		this.goFirstTab = this.goFirstTab.bind(this);
+		this.goSecondTab = this.goSecondTab.bind(this);
 	}
 
-	clickit() {
-		this.setState({
-			color: 'groovy',
-			weather: 'cold',
-			feels: 'blue'
-		});
+	goFirstTab() {
+		this.setState({isFirstTab: true});
+	}
+
+	goSecondTab() {
+		this.setState({isFirstTab: false});
 	}
 
 	render() {
+		const isFirstTab = this.state.isFirstTab;
+
 		return (
-			<div>
-				<button onClick={this.clickit}>Click it</button>
-				<PassageTestChild {...this.state} />
+			<div className="p-2 p-sm-4 console-container">	
+				<div className="row flex-row">
+					<button className={`tab ${isFirstTab ? 'live' : 'dead'} col-6 d-flex justify-content-center align-items-center`} onClick={this.goFirstTab}>Markets you manage</button>
+					<button className={`tab ${isFirstTab ? 'dead' : 'live'} col-6 d-flex justify-content-center align-items-center`} onClick={this.goSecondTab}>Markets you sell at</button>
+				</div>
+				<CreateNewCycle buttonTitle='Create New Market' tabIsLive={isFirstTab ? true : false} />
+				<CreateNewCycle buttonTitle='Join Another Market' tabIsLive={isFirstTab ? false : true} />
 			</div>
-		);
+		);		
 	}
 }
 
-function PassageTestChild(props) {
-	return <div>The light is {props.color}, the weather is {props.weather}, and I'm feeling {props.feels}!</div>
-}
 
 
 
 
 
-//TODO: This will eventually be the App complete parent component, since all rendering logic depends on Login state
 
 class FirebaseLogin extends React.Component {
 	constructor(props) {
@@ -102,15 +221,15 @@ class FirebaseLogin extends React.Component {
 	componentDidMount() {
 		firebase.auth().onAuthStateChanged(user => {
 			if (user) {
-					this.setState({
-						authUser: user,
-						waiting: null
-					});
+				this.setState({
+					authUser: user,
+					waiting: null
+				});
 			} else {
-					this.setState({
-						authUser: null,
-						waiting: null
-					});
+				this.setState({
+					authUser: null,
+					waiting: null
+				});
 			}
 		});
 	}
@@ -118,35 +237,14 @@ class FirebaseLogin extends React.Component {
 	render() {
 		const isWaiting = this.state.waiting;
 		const isLoggedIn = this.state.authUser;
-		let signInSpan;
-
-
-
-		if (isWaiting) {
-			signInSpan = <div className="p-2">Waiting...</div>;
-		} else {
-			if (isLoggedIn) {
-				signInSpan = (
-					<div className="d-inline-flex align-items-center flex-column flex-sm-row">
-						<div className="d-flex m-2" id="userWelcome">Welcome, {isLoggedIn.displayName}!</div>
-						<img className="d-flex user-picture m-2" id="userPicture" src={isLoggedIn.photoURL}/>
-						<button className="d-flex button m-2" id="signOut" onClick={this.signOut}>Sign Out</button>
-					</div>
-				);
-			} else {
-				signInSpan = (
-					<button className="d-flex button m-2" id="signIn" onClick={this.signIn}>Sign In with Google</button>
-				);
-			}
-		}
-
+		
 
 
 		return (
-			<nav className="nav-bar row d-flex align-items-center justify-content-center justify-content-sm-between flex-column flex-sm-row">
-				<div className="logo d-flex align-items-center col-auto mr-sm-auto">Who's at the Market?</div>
-				{signInSpan}
-			</nav>
+			<div className="container-fluid app-global">
+				<NavigationBar isWaiting={isWaiting} isLoggedIn={isLoggedIn} signIn={this.signIn} signOut={this.signOut}/>
+				<TabbedContainer />
+    		</div>
 		);
 
 
@@ -158,130 +256,12 @@ class FirebaseLogin extends React.Component {
 
 
 
-class CreateNewCycle extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {isFirstCycle: true};
-		this.handleForward = this.handleForward.bind(this);
-		this.handleBackward = this.handleBackward.bind(this);
-	}
-	
-	handleForward() {
-		this.setState({isFirstCycle: false});
-	}
-	
-	handleBackward() {
-		this.setState({isFirstCycle: true});
-	}
-	
-	render() {
-		const isFirstCycle = this.state.isFirstCycle;
-		let content;
-		let buttons;
-
-		if (isFirstCycle) {
-			content = <div className="row d-flex">This is a component that shows data if database, lists areas in either member or manager view, otherwise asks if you want to create one.</div>;
-			buttons = (
-				<div className="row d-flex">	
-					<button className = "button m-4" onClick={this.handleForward}>Create a new {this.props.buttonTitle}</button>
-				</div>
-			);
-		} else {
-			content = <div className ="row d-flex">This should render an input field object</div>;
-			buttons = (
-				<div className="row d-flex">
-					<button className = "button m-4" onClick={this.handleBackward}>Go back</button>
-					<button className = "button m-4">Create new Market!</button>
-				</div>
-			);
-		}
-
-		return (
-			<div className="tab bottom row d-flex justify-content-center align-items-center">
-				{content}
-				{buttons}
-			</div>
-		);	
-	}
-}
-
-
-
-
-
-
-class TabbedContainer extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {isFirstTab: true};
-		this.goFirstTab = this.goFirstTab.bind(this);
-		this.goSecondTab = this.goSecondTab.bind(this);
-	}
-
-	goFirstTab() {
-		this.setState({isFirstTab: true});
-	}
-
-	goSecondTab() {
-		this.setState({isFirstTab: false});
-	}
-
-	render() {
-		const isFirstTab = this.state.isFirstTab;
-		let cycleOne = <CreateNewCycle buttonTitle='Create New Market' />;
-		let cycleTwo = <CreateNewCycle buttonTitle='Join New Market' />;
-		let cycleContainer;
-
-		if (isFirstTab) {
-			cycleContainer = (
-				<div>
-					<div>
-						{cycleOne}
-					</div>
-					<div className="d-none">
-						{cycleTwo}
-					</div>
-				</div>
-			);
-		} else {
-			cycleContainer = (
-				<div>
-					<div className="d-none">
-						{cycleOne}
-					</div>
-					<div>
-						{cycleTwo}
-					</div>
-				</div>
-			); 
-		}
-
-		return (
-			<div className="p-2 p-sm-4 console-container">	
-				<div className="row flex-row d-flex">
-					<button className={`tab ${(isFirstTab ? 'live' : 'dead')} col-6 d-flex justify-content-center align-items-center`} onClick={this.goFirstTab}>Markets you manage</button>
-					<button className={`tab ${(isFirstTab ? 'dead' : 'live')} col-6 d-flex justify-content-center align-items-center`} onClick={this.goSecondTab}>Markets you sell at</button>
-				</div>
-				{cycleContainer}
-			</div>
-		);		
-	}
-}
-
-
-
 
 //TODO: This will eventualy just have FirebaseLogin component, (or rather FirebaseLogin will be renamed App and replace this as a class declaration)
 
 
 function App() {
-  return(
-    <div className="container-fluid app-global">
-      <FirebaseLogin />
-      <PassageTestParent />
-      <TabbedContainer />
-    </div>
-  );
+  return <FirebaseLogin />;
 }
 
 export default hot(module)(App);
