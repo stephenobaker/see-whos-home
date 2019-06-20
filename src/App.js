@@ -87,10 +87,40 @@ function NavigationBar(props) {
 }
 
 
+function PublicMarketTable(props) {
+	if (!props.isLoggedIn) {
+		return <div>Public Market Display Table will go here</div>
+	} else {
+		return null;
+	}
+
+}
+
+
+function MarketsManaged(props) {
+	return <div>MarketsManaged</div>;
+}
+
+
+function CreateMarketForm(props) {
+	return (
+		<div>CreateMarketForm</div>
+	);
+}
+
+
+function MarketsJoined(props) {
+	return <div>MarketsJoined</div>;
+}
+
+
+function JoinMarketForm(props) {
+	return <div>JoinMarketForm</div>;
+}
 
 
 
-class CreateNewCycle extends React.Component {
+class TwoViewCycle extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {isFirstCycle: true};
@@ -109,41 +139,34 @@ class CreateNewCycle extends React.Component {
 	render() {
 		const isFirstCycle = this.state.isFirstCycle;
 		const tabIsLive = this.props.tabIsLive;
-		let content;
-		let buttons;
 
-		if (isFirstCycle) {
-			content = <div className="col-12">This is a component that shows data if database, lists areas in either member or manager view, otherwise asks if you want to create one.</div>;
-			buttons = (
-				<div className="col-12">	
-					<button className = "button m-4" onClick={this.handleForward}>Create a new {this.props.buttonTitle}</button>
-				</div>
-			);
+		if (tabIsLive) {
+			if (isFirstCycle) {
+				return (
+					<div className="tab bottom row justify-content-center align-items-center">
+						<div className='col-12 d-flex justify-content-center'>
+							{this.props.firstComponent}
+						</div>
+						<div className='col-12 d-flex justify-content-center'>	
+							<button className = "button m-4" onClick={this.handleForward}>{this.props.createText}</button>
+						</div>						
+					</div>
+				);	
+			} else {
+				return (
+					<div className="tab bottom row justify-content-center align-items-center">
+						<div className='col-12 d-flex justify-content-center'>
+							{this.props.secondComponent}
+						</div>
+						<div className='col-12 d-flex justify-content-center'>
+							<button className = "button m-4" onClick={this.handleBackward}>Go back</button>
+						</div>
+					</div>
+				);
+			}			
 		} else {
-			content = <div className ="row">This should render an input field object</div>;
-			buttons = (
-				<div className="row d-flex">
-					<button className = "button m-4" onClick={this.handleBackward}>Go back</button>
-					<button className = "button m-4">Create new Market!</button>
-				</div>
-			);
+			return null;
 		}
-
-		return (tabIsLive ? (
-
-			
-				<div className="tab bottom row d-flex justify-content-center align-items-center">
-					{content}
-					{buttons}
-				</div>
-			
-
-		) : (
-
-			 null
-
-		));
-		
 	}
 }
 
@@ -170,17 +193,36 @@ class TabbedContainer extends React.Component {
 
 	render() {
 		const isFirstTab = this.state.isFirstTab;
+		const isLoggedIn = this.props.isLoggedIn;
 
-		return (
-			<div className="p-2 p-sm-4 console-container">	
-				<div className="row flex-row">
-					<button className={`tab ${isFirstTab ? 'live' : 'dead'} col-6 d-flex justify-content-center align-items-center`} onClick={this.goFirstTab}>Markets you manage</button>
-					<button className={`tab ${isFirstTab ? 'dead' : 'live'} col-6 d-flex justify-content-center align-items-center`} onClick={this.goSecondTab}>Markets you sell at</button>
+		if (isLoggedIn) {
+			return (
+				<div className="p-2 p-sm-4 console-container">	
+					<div className="row flex-row">
+						<button className={`tab ${isFirstTab ? 'live' : 'dead'} col-6 d-flex justify-content-center align-items-center`} onClick={this.goFirstTab}>
+							Markets you manage
+						</button>
+						<button className={`tab ${isFirstTab ? 'dead' : 'live'} col-6 d-flex justify-content-center align-items-center`} onClick={this.goSecondTab}>
+							Markets you sell at
+						</button>
+					</div>
+					<TwoViewCycle
+						createText='Create New Market'
+						tabIsLive={isFirstTab ? true : false}
+						firstComponent={<MarketsManaged />}
+						secondComponent={<CreateMarketForm />}
+					/>
+					<TwoViewCycle
+						createText='Join A Market'
+						tabIsLive={isFirstTab ? false : true}
+						firstComponent={<MarketsJoined />}
+						secondComponent={<JoinMarketForm />}
+					/>
 				</div>
-				<CreateNewCycle buttonTitle='Create New Market' tabIsLive={isFirstTab ? true : false} />
-				<CreateNewCycle buttonTitle='Join Another Market' tabIsLive={isFirstTab ? false : true} />
-			</div>
-		);		
+			);
+		} else {
+			return null;
+		}	
 	}
 }
 
@@ -243,7 +285,8 @@ class FirebaseLogin extends React.Component {
 		return (
 			<div className="container-fluid app-global">
 				<NavigationBar isWaiting={isWaiting} isLoggedIn={isLoggedIn} signIn={this.signIn} signOut={this.signOut}/>
-				<TabbedContainer />
+				<TabbedContainer isLoggedIn={isLoggedIn} />
+				<PublicMarketTable isLoggedIn={isLoggedIn} />
     		</div>
 		);
 
