@@ -8,24 +8,16 @@ var firebase = require('firebase/app');
 require('firebase/auth');
 require('firebase/database');
 
-
 //For development only. This won't be needed when app is served via Firebase Hosting as custom URL's will be faster
 firebase.initializeApp({
-  apiKey: "AIzaSyA3aZhoexP5H34RieRCDBweQzX8sh0FVaU",
-  authDomain: "see-whos-home.firebaseapp.com",
-  databaseURL: "https://see-whos-home.firebaseio.com",
-  projectId: "see-whos-home",
-  storageBucket: "see-whos-home.appspot.com",
-  messagingSenderId: "387834386778",
-  appId: "1:387834386778:web:531910cc4e358641"
+	apiKey: "AIzaSyA3aZhoexP5H34RieRCDBweQzX8sh0FVaU",
+	authDomain: "see-whos-home.firebaseapp.com",
+	databaseURL: "https://see-whos-home.firebaseio.com",
+	projectId: "see-whos-home",
+	storageBucket: "see-whos-home.appspot.com",
+	messagingSenderId: "387834386778",
+	appId: "1:387834386778:web:531910cc4e358641"
 });
-
-
-var provider = new firebase.auth.GoogleAuthProvider();
-
-var database = firebase.database();
-
-
 
 
 function WaitingMessage(props) {
@@ -104,7 +96,9 @@ function MarketsManaged(props) {
 
 function CreateMarketForm(props) {
 	return (
-		<div>CreateMarketForm</div>
+		<div>CreateMarketForm
+			<button className="button m-4" >Create This Market!</button>
+		</div>
 	);
 }
 
@@ -114,8 +108,38 @@ function MarketsJoined(props) {
 }
 
 
-function JoinMarketForm(props) {
-	return <div>JoinMarketForm</div>;
+class JoinMarketForm extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {value: ''};
+
+		this.handleChange = this.handleChange.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
+	}
+
+	handleChange(event) {
+		this.setState({value: event.target.value});
+	}
+
+	handleSubmit(event) {
+		this.props.database.ref(`${this.props.authUser.uid}`).set({
+			user_id: this.props.authUser.uid,
+			vendor_name: this.state.value
+		});
+		event.preventDefault();
+	}
+
+	render() {
+		return (
+			<form onSubmit={this.handleSubmit}>
+				<label>
+					Title of space:
+					<input type="text" value={this.state.value} onChange={this.handleChange} />
+				</label>
+				<input type="submit" value="Submit" />
+			</form>
+		);
+	}
 }
 
 
@@ -216,7 +240,7 @@ class TabbedContainer extends React.Component {
 						createText='Join A Market'
 						tabIsLive={isFirstTab ? false : true}
 						firstComponent={<MarketsJoined />}
-						secondComponent={<JoinMarketForm />}
+						secondComponent={<JoinMarketForm authUser={isLoggedIn} database={this.props.database}/>}
 					/>
 				</div>
 			);
@@ -244,7 +268,7 @@ class FirebaseLogin extends React.Component {
 	}
 
 	signIn() {
-		firebase.auth().signInWithRedirect(provider).then(function(result) {
+		firebase.auth().signInWithRedirect(this.props.provider).then(function(result) {
 		  var token = result.credential.accessToken;
 		  var user = result.user;
 		}).catch(function(error) {
@@ -279,13 +303,14 @@ class FirebaseLogin extends React.Component {
 	render() {
 		const isWaiting = this.state.waiting;
 		const isLoggedIn = this.state.authUser;
+		const database = this.props.database;
 		
 
 
 		return (
 			<div className="container-fluid app-global">
 				<NavigationBar isWaiting={isWaiting} isLoggedIn={isLoggedIn} signIn={this.signIn} signOut={this.signOut}/>
-				<TabbedContainer isLoggedIn={isLoggedIn} />
+				<TabbedContainer isLoggedIn={isLoggedIn} database={this.props.database}/>
 				<PublicMarketTable isLoggedIn={isLoggedIn} />
     		</div>
 		);
@@ -303,8 +328,30 @@ class FirebaseLogin extends React.Component {
 //TODO: This will eventualy just have FirebaseLogin component, (or rather FirebaseLogin will be renamed App and replace this as a class declaration)
 
 
-function App() {
-  return <FirebaseLogin />;
+class App extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+
+	componentDidMount() {
+		
+	}
+
+	render() {
+		const props = {
+			provider: new firebase.auth.GoogleAuthProvider(),
+			database: firebase.database()
+		};
+
+		return <FirebaseLogin {...props} />;
+	}
+
+  
 }
 
 export default hot(module)(App);
+
+
+
+
+
