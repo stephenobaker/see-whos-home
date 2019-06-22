@@ -103,15 +103,26 @@ function CreateMarketForm(props) {
 }
 
 
-function MarketsJoined(props) {
-	return <div>MarketsJoined</div>;
+class MarketsJoined extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {dataRead: null}
+	}
+
+	render() {
+		const dataRead = null;
+		return <div>MarketsJoined</div>;
+	}
+
 }
 
 
 class JoinMarketForm extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {value: ''};
+		this.state = {
+			value: ''
+		};
 
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -122,14 +133,20 @@ class JoinMarketForm extends React.Component {
 	}
 
 	handleSubmit(event) {
-		this.props.database.ref(`${this.props.authUser.uid}`).set({
+		this.props.database.ref('vendors/' + this.state.value).set({
 			user_id: this.props.authUser.uid,
-			vendor_name: this.state.value
+			vendor_name: this.state.value,
+			vendor_present: false
 		});
 		event.preventDefault();
 	}
 
 	render() {
+		const vendorsRef = this.props.database.ref('vendors');
+		vendorsRef.on('value', function(snapshot) {
+			console.log(snapshot.val());
+		});
+
 		return (
 			<form onSubmit={this.handleSubmit}>
 				<label>
