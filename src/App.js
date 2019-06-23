@@ -103,17 +103,74 @@ function CreateMarketForm(props) {
 }
 
 
-class MarketsJoined extends React.Component {
+class MarketItem extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {dataRead: null}
 	}
 
 	render() {
-		const dataRead = null;
-		return <div>MarketsJoined</div>;
+		return (
+			<div>
+				Market Name
+				<button>Do Something</button>
+			</div>
+		);
+	}
+}
+
+
+
+
+class MarketsJoined extends React.Component {
+	constructor(props) {
+		super(props);
+
+		this.state = ({
+			loading: true,
+			items: []
+		});
 	}
 
+	componentDidMount() {
+		
+		const databaseRef = this.props.database.ref('vendors').orderByKey();
+		
+		databaseRef.on('value', (snapshot) => {
+			let items = snapshot.val();
+			let newState = [];
+			for (let item in items) {
+				//newState += item;
+				console.log(item);
+				newState.push(item);
+			}
+
+			this.setState({
+				items: newState,
+				loading: false
+			});
+
+		});
+		
+	}
+
+	render() {
+		const divString = this.state.items.map((item) =>
+			<div key={item}>{item}</div>
+		);
+		
+
+
+	
+		if (this.state.loading) {
+			return <div>Loading...</div>;
+		} else {
+			return (
+				<div>
+					{divString}
+				</div>
+			);
+		}
+	}
 }
 
 
@@ -142,19 +199,20 @@ class JoinMarketForm extends React.Component {
 	}
 
 	render() {
-		const vendorsRef = this.props.database.ref('vendors');
-		vendorsRef.on('value', function(snapshot) {
-			console.log(snapshot.val());
-		});
+		const isLoggedIn = this.props.isLoggedIn;
 
+		
 		return (
-			<form onSubmit={this.handleSubmit}>
-				<label>
-					Title of space:
-					<input type="text" value={this.state.value} onChange={this.handleChange} />
-				</label>
-				<input type="submit" value="Submit" />
-			</form>
+			<div>
+				<MarketsJoined authUser={isLoggedIn} database={this.props.database} />
+				<form onSubmit={this.handleSubmit}>
+					<label>
+						Title of space:
+						<input type="text" value={this.state.value} onChange={this.handleChange} />
+					</label>
+					<input type="submit" value="Submit" />
+				</form>
+			</div>
 		);
 	}
 }
@@ -256,8 +314,8 @@ class TabbedContainer extends React.Component {
 					<TwoViewCycle
 						createText='Join A Market'
 						tabIsLive={isFirstTab ? false : true}
-						firstComponent={<MarketsJoined />}
-						secondComponent={<JoinMarketForm authUser={isLoggedIn} database={this.props.database}/>}
+						firstComponent={<MarketsJoined authUser={isLoggedIn} database={this.props.database} />}
+						secondComponent={<JoinMarketForm authUser={isLoggedIn} database={this.props.database} />}
 					/>
 				</div>
 			);
