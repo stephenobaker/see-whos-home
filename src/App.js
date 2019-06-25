@@ -452,11 +452,7 @@ class MarketsJoined extends React.Component {
 				items: newState,
 				loading: false
 			});
-		});
-
-		//TODO: Try putting setState loading out here so render happens only
-		//once after items state is updated on Firebase 'child_added' listener	
-		
+		});		
 	}
 
 	componentWillUnmount() {
