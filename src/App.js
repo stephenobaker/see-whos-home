@@ -89,6 +89,69 @@ function PublicMarketTable(props) {
 }
 
 
+
+class MarketItem extends React.Component {
+	constructor(props) {
+		super(props);
+
+		this.handleDelete = this.handleDelete.bind(this);
+
+	}
+
+	/*componentDidMount() {
+		
+		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey + '/vendor_present');
+		
+		databaseRef.on('value', (snapshot) => {
+			let isOpen = snapshot.val();			
+			
+			this.setState({
+				isOpen: isOpen
+			});
+
+		});
+
+	}*/
+
+	/*handleOpen() {
+
+		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
+		
+		databaseRef.update({
+			vendor_present: true,
+			user_id: this.props.authUser.uid
+		});
+	}
+
+	handleClose() {
+
+		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
+		
+		databaseRef.update({
+			vendor_present: false,
+			user_id: this.props.authUser.uid
+		});
+	}*/
+
+	handleDelete() {
+		const databaseRef = this.props.database.ref('markets/' + this.props.yourKey);
+		databaseRef.remove();
+	}
+
+	render() {
+		return (
+			<div>
+				{this.props.vendorName}
+				<button onClick={this.handleDelete}>Click to delete</button>
+			</div>
+		);
+	}
+}
+
+
+
+
+
 class MarketsManaged extends React.Component {
 constructor(props) {
 		super(props);
@@ -117,6 +180,20 @@ constructor(props) {
 				loading: false
 			});
 		});
+
+		databaseRef.on('child_removed', (snapshot) => {
+			let key = snapshot.key;
+			for (var i = 0; i < newState.length; i++) {
+				if (newState[i].key == key) {
+					newState.splice(i, 1);
+				}
+			}
+			
+			this.setState({
+				items: newState,
+				loading: false
+			});
+		});
 	}
 
 	componentWillUnmount() {
@@ -125,7 +202,7 @@ constructor(props) {
 
 	render() {
 		const divString = this.state.items.map((item) =>
-			<div key={item.key}>{item.name}</div>
+			<MarketItem key={item.key} yourKey={item.key} vendorName={item.name} database={this.props.database} authUser={this.props.authUser} />
 		);
 		
 
@@ -193,7 +270,7 @@ class VendorItem extends React.Component {
 		super(props);
 
 		this.handleOpen = this.handleOpen.bind(this);
-		this.handleClose = this.handleClose.bind(this)
+		this.handleClose = this.handleClose.bind(this);
 
 		this.state = ({
 			isOpen: false
