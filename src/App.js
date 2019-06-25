@@ -106,12 +106,16 @@ constructor(props) {
 
 		databaseRef.on('child_added', (snapshot) => {
 			let item = snapshot.val();
+			let key = snapshot.key;
 			// console.log(snapshot.val().vendor_name);
 			// console.log(snapshot.val().vendor_present);
 			// //for (let item in items) {
 				//newState += item;
 				//console.log(item.vendor_name);
-			newState.push(item.vendor_name);
+			newState.push({
+				name: item.vendor_name,
+				key: key
+			});
 			//console.log(newState);
 			//}
 			this.setState({
@@ -120,13 +124,32 @@ constructor(props) {
 			});
 
 		});
+
+		/*const databaseRef = this.props.database.ref('vendors');
+		let newState = [];
+
+		databaseRef.on('child_added', (snapshot) => {
+			let item = snapshot.val();
+			let key = snapshot.key;
+			
+			newState.push({
+				name: item.vendor_name,
+				key: key
+			});
+			
+			this.setState({
+				items: newState,
+				loading: false
+			});
+
+		});*/
 		
 		
 	}
 
 	render() {
 		const divString = this.state.items.map((item) =>
-			<div key={item.key}>{item}</div>
+			<div key={item.key}>{item.name}</div>
 		);
 		
 
@@ -268,8 +291,6 @@ class MarketsJoined extends React.Component {
 		databaseRef.on('child_added', (snapshot) => {
 			let item = snapshot.val();
 			let key = snapshot.key;
-			console.log(key);
-			console.log(item);
 			
 			newState.push({
 				name: item.vendor_name,
