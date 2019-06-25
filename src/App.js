@@ -376,8 +376,7 @@ class VendorItem extends React.Component {
 		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
 		
 		databaseRef.update({
-			vendor_present: true,
-			user_id: this.props.authUser.uid
+			vendor_present: true
 		});
 	}
 
@@ -386,8 +385,7 @@ class VendorItem extends React.Component {
 		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
 		
 		databaseRef.update({
-			vendor_present: false,
-			user_id: this.props.authUser.uid
+			vendor_present: false
 		});
 	}
 
