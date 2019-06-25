@@ -220,7 +220,7 @@ class VendorItem extends React.Component {
 
 		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
 		
-		databaseRef.set({
+		databaseRef.update({
 			vendor_present: true,
 			user_id: this.props.authUser.uid
 		});
@@ -230,7 +230,7 @@ class VendorItem extends React.Component {
 
 		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
 		
-		databaseRef.set({
+		databaseRef.update({
 			vendor_present: false,
 			user_id: this.props.authUser.uid
 		});
@@ -269,6 +269,7 @@ class MarketsJoined extends React.Component {
 			let item = snapshot.val();
 			let key = snapshot.key;
 			console.log(key);
+			console.log(item);
 			
 			newState.push({
 				name: item.vendor_name,
@@ -308,7 +309,7 @@ class MarketsJoined extends React.Component {
 }
 
 
-class JoinMarketForm extends React.Component {
+class CreateVendorForm extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -333,7 +334,7 @@ class JoinMarketForm extends React.Component {
 	}
 
 	render() {
-		const isLoggedIn = this.props.isLoggedIn;
+		const isLoggedIn = this.props.authUser;
 
 
 		return (
@@ -449,7 +450,7 @@ class TabbedContainer extends React.Component {
 						createText='Join A Market'
 						tabIsLive={isFirstTab ? false : true}
 						firstComponent={<MarketsJoined authUser={isLoggedIn} database={this.props.database} />}
-						secondComponent={<JoinMarketForm authUser={isLoggedIn} database={this.props.database} />}
+						secondComponent={<CreateVendorForm authUser={isLoggedIn} database={this.props.database} />}
 					/>
 				</div>
 			);
