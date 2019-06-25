@@ -79,13 +79,87 @@ function NavigationBar(props) {
 }
 
 
-function PublicMarketTable(props) {
-	if (!props.isLoggedIn) {
-		return <div>Public Market Display Table will go here</div>
-	} else {
-		return null;
+class PublicMarketTable extends React.Component {
+	constructor(props) {
+		super(props);
+
+		this.state = ({
+			loading: true,
+			items: []
+		});
 	}
 
+	componentDidMount() {
+
+		const vendorsRef = this.props.database.ref('vendors');
+		let newState = [];
+
+		vendorsRef.on('child_added', (snapshot) => {
+			let item = snapshot.val();
+			let key = snapshot.key;
+			
+			newState.push({
+				name: item.vendor_name,
+				present: item.vendor_present,
+				key: key
+			});
+			
+			this.setState({
+				items: newState,
+				loading: false
+			});
+		});
+
+		vendorsRef.on('child_changed', (snapshot) => {
+			let item = snapshot.val();
+			let key = snapshot.key;
+			
+			let newData = {
+				name: item.vendor_name,
+				present: item.vendor_present,
+				key: key
+			};
+			
+			for (var i = 0; i < newState.length; i++) {
+				if (newState[i].key == key) {
+					newState.splice(i, 1, newData);
+				}
+			}
+			
+			this.setState({
+				items: newState,
+				loading: false
+			});
+		});
+
+		vendorsRef.on('child_removed', (snapshot) => {
+			let key = snapshot.key;
+			for (var i = 0; i < newState.length; i++) {
+				if (newState[i].key == key) {
+					newState.splice(i, 1);
+				}
+			}
+			
+			this.setState({
+				items: newState,
+				loading: false
+			});
+		});
+	}
+
+	componentWillUnmount() {
+		this.props.database.ref('vendors').off();
+	}
+
+	render() {
+		const publicOutput = this.state.items.map((item) =>
+			<div key={item.key}>{item.name} is {item.present ? 'open' : 'not open'}</div>
+		);
+
+
+		return <div>{publicOutput}</div>
+		
+	}
 }
 
 
@@ -622,9 +696,14 @@ class FirebaseLogin extends React.Component {
 
 		return (
 			<div className="container-fluid app-global">
-				<NavigationBar isWaiting={isWaiting} isLoggedIn={isLoggedIn} signIn={this.signIn} signOut={this.signOut}/>
-				<TabbedContainer isLoggedIn={isLoggedIn} database={this.props.database}/>
-				<PublicMarketTable isLoggedIn={isLoggedIn} />
+				<NavigationBar isWaiting={isWaiting} isLoggedIn={isLoggedIn} signIn={this.signIn} signOut={this.signOut} />
+				<TabbedContainer isLoggedIn={isLoggedIn} database={this.props.database} />
+				
+				{isLoggedIn? (
+					null
+				) : (
+					<PublicMarketTable isLoggedIn={isLoggedIn} database={this.props.database} />
+				)}
     		</div>
 		);
 
