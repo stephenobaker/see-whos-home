@@ -126,7 +126,7 @@ constructor(props) {
 
 	render() {
 		const divString = this.state.items.map((item) =>
-			<div key={item}>{item}</div>
+			<div key={item.key}>{item}</div>
 		);
 		
 
