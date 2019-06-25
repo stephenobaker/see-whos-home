@@ -89,8 +89,59 @@ function PublicMarketTable(props) {
 }
 
 
-function MarketsManaged(props) {
-	return <div>MarketsManaged</div>;
+class MarketsManaged extends React.Component {
+constructor(props) {
+		super(props);
+
+		this.state = ({
+			loading: true,
+			items: []
+		});
+	}
+
+	componentDidMount() {
+		
+		const databaseRef = this.props.database.ref('markets');
+		let newState = [];
+
+		databaseRef.on('child_added', (snapshot) => {
+			let item = snapshot.val();
+			// console.log(snapshot.val().vendor_name);
+			// console.log(snapshot.val().vendor_present);
+			// //for (let item in items) {
+				//newState += item;
+				//console.log(item.vendor_name);
+			newState.push(item.vendor_name);
+			//console.log(newState);
+			//}
+			this.setState({
+				items: newState,
+				loading: false
+			});
+
+		});
+		
+		
+	}
+
+	render() {
+		const divString = this.state.items.map((item) =>
+			<div key={item}>{item}</div>
+		);
+		
+
+
+	
+		if (this.state.loading) {
+			return <div>Loading...</div>;
+		} else {
+			return (
+				<div>
+					{divString}
+				</div>
+			);
+		}
+	}
 }
 
 
@@ -138,16 +189,30 @@ class CreateMarketForm extends React.Component {
 }
 
 
-class MarketItem extends React.Component {
+class VendorItem extends React.Component {
 	constructor(props) {
 		super(props);
+
+		this.toggleOpen = this.toggleOpen.bind(this);
+
+		this.state = ({
+			isOpen: false
+		});
+	}
+
+	toggleOpen() {
+		this.setState(state => ({
+			isOpen: !state.isOpen
+		}));
+
+
 	}
 
 	render() {
 		return (
 			<div>
-				Market Name
-				<button>Do Something</button>
+				{this.props.vendorName} is {this.state.isOpen ? 'open' : 'not open'}.
+				<button onClick={this.toggleOpen}>Click to {this.state.isOpen ? 'close' : 'open'}.</button>
 			</div>
 		);
 	}
@@ -193,7 +258,7 @@ class MarketsJoined extends React.Component {
 
 	render() {
 		const divString = this.state.items.map((item) =>
-			<div key={item}>{item}</div>
+			<VendorItem key={item} vendorName={item} />
 		);
 		
 
