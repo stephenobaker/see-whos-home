@@ -525,7 +525,9 @@ class CreateVendorForm extends React.Component {
 
 
 
-class TwoViewCycle extends React.Component {
+
+
+class MarketsCycle extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {isFirstCycle: true};
@@ -550,7 +552,7 @@ class TwoViewCycle extends React.Component {
 				return (
 					<div className="tab bottom row justify-content-center align-items-center">
 						<div className='col-12 d-flex justify-content-center'>
-							{this.props.firstComponent}
+							<MarketsManaged authUser={this.props.isLoggedIn} database={this.props.database} />
 						</div>
 						<div className='col-12 d-flex justify-content-center'>	
 							<button className = "button m-4" onClick={this.handleForward}>{this.props.createText}</button>
@@ -561,7 +563,7 @@ class TwoViewCycle extends React.Component {
 				return (
 					<div className="tab bottom row justify-content-center align-items-center">
 						<div className='col-12 d-flex justify-content-center'>
-							{this.props.secondComponent}
+							<CreateMarketForm authUser={this.props.isLoggedIn} database={this.props.database} />
 						</div>
 						<div className='col-12 d-flex justify-content-center'>
 							<button className = "button m-4" onClick={this.handleBackward}>Go back</button>
@@ -574,7 +576,6 @@ class TwoViewCycle extends React.Component {
 		}
 	}
 }
-
 
 class VendorsCycle extends React.Component {
 	constructor(props) {
@@ -659,14 +660,14 @@ class TabbedContainer extends React.Component {
 							Markets you sell at
 						</button>
 					</div>
-					<TwoViewCycle
+					<MarketsCycle
 						createText='Create New Market'
 						tabIsLive={isFirstTab ? true : false}
-						firstComponent={<MarketsManaged authUser={isLoggedIn} database={this.props.database} />}
-						secondComponent={<CreateMarketForm authUser={isLoggedIn} database={this.props.database} />}
+						isLoggedIn={isLoggedIn}
+						database={this.props.database}
 					/>
 					<VendorsCycle
-						createText='Join A Market'
+						createText='Create New Vendor'
 						tabIsLive={isFirstTab ? false : true}
 						isLoggedIn={isLoggedIn}
 						database={this.props.database}
