@@ -271,6 +271,7 @@ class VendorItem extends React.Component {
 
 		this.handleOpen = this.handleOpen.bind(this);
 		this.handleClose = this.handleClose.bind(this);
+		this.handleDelete = this.handleDelete.bind(this);
 
 		this.state = ({
 			isOpen: false
@@ -290,6 +291,10 @@ class VendorItem extends React.Component {
 
 		});
 
+	}
+
+	componentWillUnmount() {
+		this.props.database.ref('vendors/' + this.props.yourKey + '/vendor_present').off();
 	}
 
 	handleOpen() {
@@ -312,12 +317,18 @@ class VendorItem extends React.Component {
 		});
 	}
 
+	handleDelete() {
+		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
+		databaseRef.remove();
+	}
+
 	render() {
 		return (
 			<div>
 				{this.props.vendorName} is {this.state.isOpen ? 'open' : 'not open'}.
 				<button onClick={this.handleOpen}>Click to open</button>
 				<button onClick={this.handleClose}>Click to close</button>
+				<button onClick={this.handleDelete}>Delete</button>
 			</div>
 		);
 	}
@@ -355,6 +366,20 @@ class MarketsJoined extends React.Component {
 				loading: false
 			});
 
+		});
+
+		databaseRef.on('child_removed', (snapshot) => {
+			let key = snapshot.key;
+			for (var i = 0; i < newState.length; i++) {
+				if (newState[i].key == key) {
+					newState.splice(i, 1);
+				}
+			}
+			
+			this.setState({
+				items: newState,
+				loading: false
+			});
 		});
 
 		//TODO: Try putting setState loading out here so render happens only
