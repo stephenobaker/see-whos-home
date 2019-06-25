@@ -576,7 +576,55 @@ class TwoViewCycle extends React.Component {
 }
 
 
+class VendorsCycle extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {isFirstCycle: true};
+		this.handleForward = this.handleForward.bind(this);
+		this.handleBackward = this.handleBackward.bind(this);
+	}
+	
+	handleForward() {
+		this.setState({isFirstCycle: false});
+	}
+	
+	handleBackward() {
+		this.setState({isFirstCycle: true});
+	}
+	
+	render() {
+		const isFirstCycle = this.state.isFirstCycle;
+		const tabIsLive = this.props.tabIsLive;
 
+		if (tabIsLive) {
+			if (isFirstCycle) {
+				return (
+					<div className="tab bottom row justify-content-center align-items-center">
+						<div className='col-12 d-flex justify-content-center'>
+							<MarketsJoined authUser={this.props.isLoggedIn} database={this.props.database} />
+						</div>
+						<div className='col-12 d-flex justify-content-center'>	
+							<button className = "button m-4" onClick={this.handleForward}>{this.props.createText}</button>
+						</div>						
+					</div>
+				);	
+			} else {
+				return (
+					<div className="tab bottom row justify-content-center align-items-center">
+						<div className='col-12 d-flex justify-content-center'>
+							<CreateVendorForm authUser={this.props.isLoggedIn} database={this.props.database} />
+						</div>
+						<div className='col-12 d-flex justify-content-center'>
+							<button className = "button m-4" onClick={this.handleBackward}>Go back</button>
+						</div>
+					</div>
+				);
+			}			
+		} else {
+			return null;
+		}
+	}
+}
 
 
 
@@ -617,11 +665,11 @@ class TabbedContainer extends React.Component {
 						firstComponent={<MarketsManaged authUser={isLoggedIn} database={this.props.database} />}
 						secondComponent={<CreateMarketForm authUser={isLoggedIn} database={this.props.database} />}
 					/>
-					<TwoViewCycle
+					<VendorsCycle
 						createText='Join A Market'
 						tabIsLive={isFirstTab ? false : true}
-						firstComponent={<MarketsJoined authUser={isLoggedIn} database={this.props.database} />}
-						secondComponent={<CreateVendorForm authUser={isLoggedIn} database={this.props.database} />}
+						isLoggedIn={isLoggedIn}
+						database={this.props.database}
 					/>
 				</div>
 			);
