@@ -193,26 +193,55 @@ class VendorItem extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.toggleOpen = this.toggleOpen.bind(this);
+		this.handleOpen = this.handleOpen.bind(this);
+		this.handleClose = this.handleClose.bind(this)
 
 		this.state = ({
 			isOpen: false
 		});
 	}
 
-	toggleOpen() {
-		this.setState(state => ({
-			isOpen: !state.isOpen
-		}));
+	componentDidMount() {
+		
+		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey + '/vendor_present');
+		
+		databaseRef.on('value', (snapshot) => {
+			let isOpen = snapshot.val();			
+			
+			this.setState({
+				isOpen: isOpen
+			});
 
+		});
 
+	}
+
+	handleOpen() {
+
+		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
+		
+		databaseRef.set({
+			vendor_present: true,
+			user_id: this.props.authUser.uid
+		});
+	}
+
+	handleClose() {
+
+		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
+		
+		databaseRef.set({
+			vendor_present: false,
+			user_id: this.props.authUser.uid
+		});
 	}
 
 	render() {
 		return (
 			<div>
 				{this.props.vendorName} is {this.state.isOpen ? 'open' : 'not open'}.
-				<button onClick={this.toggleOpen}>Click to {this.state.isOpen ? 'close' : 'open'}.</button>
+				<button onClick={this.handleOpen}>Click to open</button>
+				<button onClick={this.handleClose}>Click to close</button>
 			</div>
 		);
 	}
@@ -238,27 +267,29 @@ class MarketsJoined extends React.Component {
 
 		databaseRef.on('child_added', (snapshot) => {
 			let item = snapshot.val();
-			// console.log(snapshot.val().vendor_name);
-			// console.log(snapshot.val().vendor_present);
-			// //for (let item in items) {
-				//newState += item;
-				//console.log(item.vendor_name);
-			newState.push(item.vendor_name);
-			//console.log(newState);
-			//}
+			let key = snapshot.key;
+			console.log(key);
+			
+			newState.push({
+				name: item.vendor_name,
+				key: key
+			});
+			
 			this.setState({
 				items: newState,
 				loading: false
 			});
 
 		});
-		
+
+		//TODO: Try putting setState loading out here so render happens only
+		//once after items state is updated on Firebase 'child_added' listener	
 		
 	}
 
 	render() {
 		const divString = this.state.items.map((item) =>
-			<VendorItem key={item} vendorName={item} />
+			<VendorItem key={item.key} yourKey={item.key} vendorName={item.name} database={this.props.database} authUser={this.props.authUser} />
 		);
 		
 
