@@ -94,12 +94,47 @@ function MarketsManaged(props) {
 }
 
 
-function CreateMarketForm(props) {
-	return (
-		<div>CreateMarketForm
-			<button className="button m-4" >Create This Market!</button>
-		</div>
-	);
+class CreateMarketForm extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			value: ''
+		};
+
+		this.handleChange = this.handleChange.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
+	}
+
+	handleChange(event) {
+		this.setState({value: event.target.value});
+	}
+
+	handleSubmit(event) {
+		this.props.database.ref('markets').push().set({
+			user_id: this.props.authUser.uid,
+			vendor_name: this.state.value,
+			vendor_present: false
+		});
+		event.preventDefault();
+	}
+
+	render() {
+		const isLoggedIn = this.props.isLoggedIn;
+
+
+		return (
+			<div>
+				<MarketsManaged authUser={isLoggedIn} database={this.props.database} />
+				<form onSubmit={this.handleSubmit}>
+					<label>
+						Title of space:
+						<input type="text" value={this.state.value} onChange={this.handleChange} />
+					</label>
+					<input type="submit" value="Submit" />
+				</form>
+			</div>
+		);
+	}
 }
 
 
@@ -133,23 +168,26 @@ class MarketsJoined extends React.Component {
 
 	componentDidMount() {
 		
-		const databaseRef = this.props.database.ref('vendors').orderByKey();
-		
-		databaseRef.on('value', (snapshot) => {
-			let items = snapshot.val();
-			let newState = [];
-			for (let item in items) {
-				//newState += item;
-				console.log(item);
-				newState.push(item);
-			}
+		const databaseRef = this.props.database.ref('vendors');
+		let newState = [];
 
+		databaseRef.on('child_added', (snapshot) => {
+			let item = snapshot.val();
+			// console.log(snapshot.val().vendor_name);
+			// console.log(snapshot.val().vendor_present);
+			// //for (let item in items) {
+				//newState += item;
+				//console.log(item.vendor_name);
+			newState.push(item.vendor_name);
+			//console.log(newState);
+			//}
 			this.setState({
 				items: newState,
 				loading: false
 			});
 
 		});
+		
 		
 	}
 
@@ -190,7 +228,7 @@ class JoinMarketForm extends React.Component {
 	}
 
 	handleSubmit(event) {
-		this.props.database.ref('vendors/' + this.state.value).set({
+		this.props.database.ref('vendors').push().set({
 			user_id: this.props.authUser.uid,
 			vendor_name: this.state.value,
 			vendor_present: false
@@ -201,7 +239,7 @@ class JoinMarketForm extends React.Component {
 	render() {
 		const isLoggedIn = this.props.isLoggedIn;
 
-		
+
 		return (
 			<div>
 				<MarketsJoined authUser={isLoggedIn} database={this.props.database} />
@@ -308,8 +346,8 @@ class TabbedContainer extends React.Component {
 					<TwoViewCycle
 						createText='Create New Market'
 						tabIsLive={isFirstTab ? true : false}
-						firstComponent={<MarketsManaged />}
-						secondComponent={<CreateMarketForm />}
+						firstComponent={<MarketsManaged authUser={isLoggedIn} database={this.props.database} />}
+						secondComponent={<CreateMarketForm authUser={isLoggedIn} database={this.props.database} />}
 					/>
 					<TwoViewCycle
 						createText='Join A Market'
