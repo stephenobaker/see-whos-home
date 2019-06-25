@@ -100,51 +100,27 @@ constructor(props) {
 	}
 
 	componentDidMount() {
-		
 		const databaseRef = this.props.database.ref('markets');
 		let newState = [];
 
 		databaseRef.on('child_added', (snapshot) => {
 			let item = snapshot.val();
 			let key = snapshot.key;
-			// console.log(snapshot.val().vendor_name);
-			// console.log(snapshot.val().vendor_present);
-			// //for (let item in items) {
-				//newState += item;
-				//console.log(item.vendor_name);
+			
 			newState.push({
 				name: item.vendor_name,
 				key: key
 			});
-			//console.log(newState);
-			//}
+			
 			this.setState({
 				items: newState,
 				loading: false
 			});
-
 		});
+	}
 
-		/*const databaseRef = this.props.database.ref('vendors');
-		let newState = [];
-
-		databaseRef.on('child_added', (snapshot) => {
-			let item = snapshot.val();
-			let key = snapshot.key;
-			
-			newState.push({
-				name: item.vendor_name,
-				key: key
-			});
-			
-			this.setState({
-				items: newState,
-				loading: false
-			});
-
-		});*/
-		
-		
+	componentWillUnmount() {
+		this.props.database.ref('markets').off();
 	}
 
 	render() {
@@ -307,6 +283,10 @@ class MarketsJoined extends React.Component {
 		//TODO: Try putting setState loading out here so render happens only
 		//once after items state is updated on Firebase 'child_added' listener	
 		
+	}
+
+	componentWillUnmount() {
+		this.props.database.ref('vendors').off();
 	}
 
 	render() {
