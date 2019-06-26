@@ -244,10 +244,12 @@ constructor(props) {
 			let item = snapshot.val();
 			let key = snapshot.key;
 			
-			newState.push({
-				name: item.vendor_name,
-				key: key
-			});
+			if (item.user_id === this.props.authUser.uid) {
+				newState.push({
+					name: item.vendor_name,
+					key: key
+				});
+			}
 			
 			this.setState({
 				items: newState,
@@ -317,6 +319,8 @@ class CreateMarketForm extends React.Component {
 			vendor_present: false
 		});
 		event.preventDefault();
+		this.setState({value: ''});
+		this.props.goBack();
 	}
 
 	render() {
@@ -325,13 +329,13 @@ class CreateMarketForm extends React.Component {
 
 		return (
 			<div>
-				<MarketsManaged authUser={isLoggedIn} database={this.props.database} />
 				<form onSubmit={this.handleSubmit}>
 					<label>
 						Title of space:
 						<input type="text" value={this.state.value} onChange={this.handleChange} />
 					</label>
 					<input type="submit" value="Submit" />
+					<button onClick={this.props.goBack}>Cancel</button>
 				</form>
 			</div>
 		);
@@ -409,7 +413,7 @@ class VendorItem extends React.Component {
 
 
 
-class MarketsJoined extends React.Component {
+class VendorsManaged extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -428,11 +432,13 @@ class MarketsJoined extends React.Component {
 			let item = snapshot.val();
 			let key = snapshot.key;
 			
-			newState.push({
-				name: item.vendor_name,
-				key: key
-			});
-			
+			if (item.user_id === this.props.authUser.uid) {
+				newState.push({
+					name: item.vendor_name,
+					key: key
+				});
+			}
+
 			this.setState({
 				items: newState,
 				loading: false
@@ -502,6 +508,8 @@ class CreateVendorForm extends React.Component {
 			vendor_present: false
 		});
 		event.preventDefault();
+		this.setState({value: ''});
+		this.props.goBack();
 	}
 
 	render() {
@@ -510,13 +518,13 @@ class CreateVendorForm extends React.Component {
 
 		return (
 			<div>
-				<MarketsJoined authUser={isLoggedIn} database={this.props.database} />
 				<form onSubmit={this.handleSubmit}>
 					<label>
 						Title of space:
 						<input type="text" value={this.state.value} onChange={this.handleChange} />
 					</label>
-					<input type="submit" value="Submit" />
+					<input type="submit" value="Create" />
+					<button onClick={this.props.goBack}>Cancel</button>
 				</form>
 			</div>
 		);
@@ -563,10 +571,7 @@ class MarketsCycle extends React.Component {
 				return (
 					<div className="tab bottom row justify-content-center align-items-center">
 						<div className='col-12 d-flex justify-content-center'>
-							<CreateMarketForm authUser={this.props.isLoggedIn} database={this.props.database} />
-						</div>
-						<div className='col-12 d-flex justify-content-center'>
-							<button className = "button m-4" onClick={this.handleBackward}>Go back</button>
+							<CreateMarketForm authUser={this.props.isLoggedIn} database={this.props.database} goBack={this.handleBackward}/>
 						</div>
 					</div>
 				);
@@ -602,7 +607,7 @@ class VendorsCycle extends React.Component {
 				return (
 					<div className="tab bottom row justify-content-center align-items-center">
 						<div className='col-12 d-flex justify-content-center'>
-							<MarketsJoined authUser={this.props.isLoggedIn} database={this.props.database} />
+							<VendorsManaged authUser={this.props.isLoggedIn} database={this.props.database} />
 						</div>
 						<div className='col-12 d-flex justify-content-center'>	
 							<button className = "button m-4" onClick={this.handleForward}>{this.props.createText}</button>
@@ -613,10 +618,7 @@ class VendorsCycle extends React.Component {
 				return (
 					<div className="tab bottom row justify-content-center align-items-center">
 						<div className='col-12 d-flex justify-content-center'>
-							<CreateVendorForm authUser={this.props.isLoggedIn} database={this.props.database} />
-						</div>
-						<div className='col-12 d-flex justify-content-center'>
-							<button className = "button m-4" onClick={this.handleBackward}>Go back</button>
+							<CreateVendorForm authUser={this.props.isLoggedIn} database={this.props.database} goBack={this.handleBackward}/>
 						</div>
 					</div>
 				);
@@ -654,10 +656,10 @@ class TabbedContainer extends React.Component {
 				<div className="p-2 p-sm-4 console-container">	
 					<div className="row flex-row">
 						<button className={`tab ${isFirstTab ? 'live' : 'dead'} col-6 d-flex justify-content-center align-items-center`} onClick={this.goFirstTab}>
-							Markets you manage
+							Markets you own
 						</button>
 						<button className={`tab ${isFirstTab ? 'dead' : 'live'} col-6 d-flex justify-content-center align-items-center`} onClick={this.goSecondTab}>
-							Markets you sell at
+							Vendors you own
 						</button>
 					</div>
 					<MarketsCycle
