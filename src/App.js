@@ -179,9 +179,9 @@ class MarketItem extends React.Component {
 
 	render() {
 		return (
-			<div className="m-auto col-8 row align-items-center d-flex justify-content-around">
+			<div className="m-auto col-10 col-sm-8 row align-items-center d-flex">
 				<div className="mr-auto">{this.props.vendorName}</div>
-				<button className="float-right button delete" onClick={this.handleDelete}>Delete</button>
+				<button className="button delete" onClick={this.handleDelete}>Delete</button>
 			</div>
 		);
 	}
@@ -253,7 +253,7 @@ constructor(props) {
 			return <div>Loading...</div>;
 		} else {
 			return (
-				<div className="row">
+				<div className="row justify-content-between">
 					{divString}
 				</div>
 			);
@@ -365,15 +365,14 @@ class VendorItem extends React.Component {
 
 	render() {
 		return (
-			<div className="row align-items-center">
-				{this.props.vendorName} is {this.state.isOpen ? 'open' : 'not open'}.
+			<div className="m-auto col-10 col-sm-8 row align-items-center d-flex">
+				<div className="mr-auto">{this.props.vendorName} is {this.state.isOpen ? 'open' : 'not open'}.</div>
 				<button className="button" onClick={this.state.isOpen ? this.handleClose : this.handleOpen}>Click to {(this.state.isOpen ? 'close' : 'open')}</button>
 				<button className="button delete" onClick={this.handleDelete}>Delete</button>
 			</div>
 		);
 	}
 }
-
 
 
 
@@ -441,7 +440,7 @@ class VendorsManaged extends React.Component {
 			return <div>Loading...</div>;
 		} else {
 			return (
-				<div>
+				<div className="row justify-content-between">
 					{divString}
 				</div>
 			);
@@ -523,7 +522,7 @@ class MarketsCycle extends React.Component {
 			if (isFirstCycle) {
 				return (
 					<div className="tab bottom row justify-content-center align-items-center">
-						<div className="w-100">
+						<div className="justify-content-center">
 							<MarketsManaged authUser={this.props.isLoggedIn} database={this.props.database} />
 						</div>
 						<div className='col-12 d-flex justify-content-center'>	
@@ -534,7 +533,7 @@ class MarketsCycle extends React.Component {
 			} else {
 				return (
 					<div className="tab bottom row justify-content-center align-items-center">
-						<div className="w-100 p-x-4">
+						<div className="justify-content-center">
 							<CreateMarketForm authUser={this.props.isLoggedIn} database={this.props.database} goBack={this.handleBackward}/>
 						</div>
 					</div>
@@ -570,7 +569,7 @@ class VendorsCycle extends React.Component {
 			if (isFirstCycle) {
 				return (
 					<div className="tab bottom row justify-content-center align-items-center">
-						<div className='col-12 d-flex justify-content-center'>
+						<div className="justify-content-center">
 							<VendorsManaged authUser={this.props.isLoggedIn} database={this.props.database} />
 						</div>
 						<div className='col-12 d-flex justify-content-center'>	
@@ -581,7 +580,7 @@ class VendorsCycle extends React.Component {
 			} else {
 				return (
 					<div className="tab bottom row justify-content-center align-items-center">
-						<div className='col-12 d-flex justify-content-center'>
+						<div className="justify-content-center">
 							<CreateVendorForm authUser={this.props.isLoggedIn} database={this.props.database} goBack={this.handleBackward}/>
 						</div>
 					</div>
@@ -617,7 +616,7 @@ class TabbedContainer extends React.Component {
 
 		if (isLoggedIn) {
 			return (
-				<div className="p-2 p-sm-4 console-container">	
+				<div className="p-2 console-container">	
 					<div className="row flex-row">
 						<button className={`tab ${isFirstTab ? 'live' : 'dead'} col-6 d-flex justify-content-center align-items-center`} onClick={this.goFirstTab}>
 							Markets you own
