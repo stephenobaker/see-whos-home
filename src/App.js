@@ -179,9 +179,9 @@ class MarketItem extends React.Component {
 
 	render() {
 		return (
-			<div>
-				{this.props.vendorName}
-				<button onClick={this.handleDelete}>Click to delete</button>
+			<div className="m-auto col-8 row align-items-center d-flex justify-content-around">
+				<div className="mr-auto">{this.props.vendorName}</div>
+				<button className="float-right button delete" onClick={this.handleDelete}>Delete</button>
 			</div>
 		);
 	}
@@ -253,7 +253,7 @@ constructor(props) {
 			return <div>Loading...</div>;
 		} else {
 			return (
-				<div>
+				<div className="row">
 					{divString}
 				</div>
 			);
@@ -365,10 +365,10 @@ class VendorItem extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<div className="row align-items-center">
 				{this.props.vendorName} is {this.state.isOpen ? 'open' : 'not open'}.
-				<button onClick={this.state.isOpen ? this.handleClose : this.handleOpen}>Click to {(this.state.isOpen ? 'close' : 'open')}</button>
-				<button onClick={this.handleDelete}>Delete</button>
+				<button className="button" onClick={this.state.isOpen ? this.handleClose : this.handleOpen}>Click to {(this.state.isOpen ? 'close' : 'open')}</button>
+				<button className="button delete" onClick={this.handleDelete}>Delete</button>
 			</div>
 		);
 	}
@@ -523,7 +523,7 @@ class MarketsCycle extends React.Component {
 			if (isFirstCycle) {
 				return (
 					<div className="tab bottom row justify-content-center align-items-center">
-						<div className='col-12 d-flex justify-content-center'>
+						<div className="w-100">
 							<MarketsManaged authUser={this.props.isLoggedIn} database={this.props.database} />
 						</div>
 						<div className='col-12 d-flex justify-content-center'>	
@@ -534,7 +534,7 @@ class MarketsCycle extends React.Component {
 			} else {
 				return (
 					<div className="tab bottom row justify-content-center align-items-center">
-						<div className='col-12 d-flex justify-content-center'>
+						<div className="w-100 p-x-4">
 							<CreateMarketForm authUser={this.props.isLoggedIn} database={this.props.database} goBack={this.handleBackward}/>
 						</div>
 					</div>

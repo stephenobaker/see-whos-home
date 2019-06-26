@@ -33,11 +33,19 @@
 	border-color: var(--primary-bold);
 	color: var(--primary-bold);
 	background-color: var(--primary-light);
-	height: 36px;
+	padding: 5px;
 }
 
 .button:hover {
 	color: red;
+}
+
+.button.delete {
+	background-color: red;
+}
+
+.button.delete:hover {
+	color: black;
 }
 
 .border-margin {
