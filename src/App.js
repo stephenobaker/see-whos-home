@@ -40,7 +40,7 @@ function UserWelcome(props) {
 	if (props.isLoggedIn) {
 		return <div className="m-2">Welcome, {props.isLoggedIn.displayName}!</div>;
 	} else {
-		return null;
+		return <div className="m-2">Own a business?</div>;
 	}
 }
 
