@@ -172,41 +172,6 @@ class MarketItem extends React.Component {
 
 	}
 
-	/*componentDidMount() {
-		
-		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey + '/vendor_present');
-		
-		databaseRef.on('value', (snapshot) => {
-			let isOpen = snapshot.val();			
-			
-			this.setState({
-				isOpen: isOpen
-			});
-
-		});
-
-	}*/
-
-	/*handleOpen() {
-
-		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
-		
-		databaseRef.update({
-			vendor_present: true,
-			user_id: this.props.authUser.uid
-		});
-	}
-
-	handleClose() {
-
-		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
-		
-		databaseRef.update({
-			vendor_present: false,
-			user_id: this.props.authUser.uid
-		});
-	}*/
-
 	handleDelete() {
 		const databaseRef = this.props.database.ref('markets/' + this.props.yourKey);
 		databaseRef.remove();
@@ -402,8 +367,7 @@ class VendorItem extends React.Component {
 		return (
 			<div>
 				{this.props.vendorName} is {this.state.isOpen ? 'open' : 'not open'}.
-				<button onClick={this.handleOpen}>Click to open</button>
-				<button onClick={this.handleClose}>Click to close</button>
+				<button onClick={this.state.isOpen ? this.handleClose : this.handleOpen}>Click to {(this.state.isOpen ? 'close' : 'open')}</button>
 				<button onClick={this.handleDelete}>Delete</button>
 			</div>
 		);
