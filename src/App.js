@@ -91,10 +91,10 @@ class PublicMarketTable extends React.Component {
 
 	componentDidMount() {
 
-		const vendorsRef = this.props.database.ref('vendors');
+		const vendorsPublicRef = this.props.database.ref('vendors');
 		let newState = [];
 
-		vendorsRef.on('child_added', (snapshot) => {
+		vendorsPublicRef.on('child_added', (snapshot) => {
 			let item = snapshot.val();
 			let key = snapshot.key;
 			
@@ -110,7 +110,7 @@ class PublicMarketTable extends React.Component {
 			});
 		});
 
-		vendorsRef.on('child_changed', (snapshot) => {
+		vendorsPublicRef.on('child_changed', (snapshot) => {
 			let item = snapshot.val();
 			let key = snapshot.key;
 			
@@ -132,7 +132,7 @@ class PublicMarketTable extends React.Component {
 			});
 		});
 
-		vendorsRef.on('child_removed', (snapshot) => {
+		vendorsPublicRef.on('child_removed', (snapshot) => {
 			let key = snapshot.key;
 			for (var i = 0; i < newState.length; i++) {
 				if (newState[i].key == key) {
@@ -148,7 +148,7 @@ class PublicMarketTable extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.props.database.ref('vendors').off();
+		//this.props.database.ref('vendors').off();
 	}
 
 	render() {
@@ -239,7 +239,7 @@ constructor(props) {
 	}
 
 	componentWillUnmount() {
-		this.props.database.ref('markets').off();
+		//this.props.database.ref('markets').off();
 	}
 
 	render() {
@@ -363,7 +363,7 @@ class VendorItem extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.props.database.ref('vendors/' + this.props.yourKey + '/vendor_present').off();
+		//this.props.database.ref('vendors/' + this.props.yourKey + '/vendor_present').off();
 	}
 
 	handleOpen() {
@@ -454,7 +454,7 @@ class VendorsManaged extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.props.database.ref('vendors').off();
+		//this.props.database.ref('vendors').off();
 	}
 
 	render() {
@@ -524,7 +524,10 @@ class CreateVendorForm extends React.Component {
 			vendor_present: false
 		});
 		event.preventDefault();
-		this.setState({value: ''});
+		this.setState({
+			valueName: '',
+			valueMarket: ''
+		});
 		this.props.goBack();
 	}
 
@@ -735,14 +738,14 @@ class TabbedContainer extends React.Component {
 function PublicMarketTest(props) {
 	const vendors = props.vendors;
 	const vendorsList = vendors.map((vendor) =>
-		<div key={vendor.key}>{vendor.vendor_name}</div>
+		<div key={vendor.key}>{vendor.name}</div>
 	);
 
 	const markets = props.markets;
 	const marketsList = markets.map((market) =>
-		<div key={market.key}>{market.market_name}</div>
+		<div key={market.key}>{market.name}</div>
 	);
-	console.log(markets);
+
 
 	return (
 		<div>
@@ -762,7 +765,8 @@ class FirebaseLogin extends React.Component {
 		this.state = {
 			authUser: null,
 			waiting: true,
-			loading: true,
+			marketsLoading: true,
+			vendorsLoading: true,
 			vendors: [],
 			markets: []
 		};
@@ -788,8 +792,8 @@ class FirebaseLogin extends React.Component {
 	}
 
 	componentDidMount() {
-		const vendorsRef = firebase.database().ref('vendors');
-		const marketsRef = firebase.database().ref('markets');
+		let vendorsRef = this.props.database.ref('vendors');
+		let marketsRef = this.props.database.ref('markets');
 
 		let vendors = [];
 		let markets = [];
@@ -812,7 +816,6 @@ class FirebaseLogin extends React.Component {
 		vendorsRef.on('child_added', (snapshot) => {
 			let item = snapshot.val();
 			let key = snapshot.key;
-			console.log(item.vendor_name);
 			
 			vendors.push({
 				name: item.vendor_name,
@@ -824,7 +827,7 @@ class FirebaseLogin extends React.Component {
 			
 			this.setState({
 				vendors: vendors,
-				loading: false
+				vendorsLoading: false
 			});
 		});
 
@@ -833,14 +836,14 @@ class FirebaseLogin extends React.Component {
 			let key = snapshot.key;
 			
 			markets.push({
-				name: item.vendor_name,
+				name: item.market_name,
 				userId: item.user_id,
 				key: key
 			});
 			
 			this.setState({
 				markets: markets,
-				loading: false
+				marketsLoading: false
 			});
 		});
 
@@ -863,8 +866,7 @@ class FirebaseLogin extends React.Component {
 			}
 			
 			this.setState({
-				vendors: vendors,
-				loading: false
+				vendors: vendors
 			});
 		});
 
@@ -885,8 +887,7 @@ class FirebaseLogin extends React.Component {
 			}
 			
 			this.setState({
-				markets: markets,
-				loading: false
+				markets: markets
 			});
 		});
 
@@ -899,8 +900,7 @@ class FirebaseLogin extends React.Component {
 			}
 			
 			this.setState({
-				vendors: vendors,
-				loading: false
+				vendors: vendors
 			});
 		});
 
@@ -913,8 +913,7 @@ class FirebaseLogin extends React.Component {
 			}
 			
 			this.setState({
-				markets: markets,
-				loading: false
+				markets: markets
 			});
 		});
 	}
@@ -928,6 +927,8 @@ class FirebaseLogin extends React.Component {
 		const isWaiting = this.state.waiting;
 		const isLoggedIn = this.state.authUser;
 		const database = this.props.database;
+		const isMarketsLoading = this.state.marketsLoading;
+		const isVendorsLoading = this.state.vendorsLoading;
 		
 
 
@@ -935,9 +936,15 @@ class FirebaseLogin extends React.Component {
 			<div className="container-fluid app-global">
 				<NavigationBar isWaiting={isWaiting} isLoggedIn={isLoggedIn} signIn={this.signIn} signOut={this.signOut} />
 				<TabbedContainer isLoggedIn={isLoggedIn} database={database} />
-				<PublicMarketTest vendors={this.state.vendors} markets={this.state.markets}/>
 				
-				{isLoggedIn? (
+				{(isVendorsLoading || isMarketsLoading) ? (
+					null
+				) : (
+					<PublicMarketTest vendors={this.state.vendors} markets={this.state.markets}/>
+				)}
+
+				
+				{isLoggedIn ? (
 					null
 				) : (
 					<PublicMarketTable isLoggedIn={isLoggedIn} database={database} />
