@@ -261,6 +261,11 @@ constructor(props) {
 			return (
 				<div className="row">
 					<div className="col-12">
+						<div className="row justify-content-center my-4">
+							<div className="col-auto">
+								Markets you own
+							</div>
+						</div>
 						{divString}
 					</div>
 				</div>
@@ -460,6 +465,11 @@ class VendorsManaged extends React.Component {
 			return (
 				<div className="row">
 					<div className = "col-12">
+						<div className="row justify-content-center my-4">
+							<div className="col-auto">
+								Vendors you own
+							</div>
+						</div>
 						{divString}
 					</div>
 				</div>
