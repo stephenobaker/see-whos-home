@@ -55,11 +55,6 @@
 	margin: 2em;
 }
 
-.console-container {
-	max-width: 800px;
-	margin: auto;
-}
-
 .tab {
 	border-width: 2px;
 	border-color: var(--primary-light);
@@ -79,7 +74,6 @@
 
 .tab.bottom {
 	border-style: none solid solid solid;
-	min-height: 400px;
 }
 
 .public-list {

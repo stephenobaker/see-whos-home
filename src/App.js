@@ -179,16 +179,17 @@ class MarketItem extends React.Component {
 
 	render() {
 		return (
-			<div className="m-auto col-10 col-sm-8 row align-items-center d-flex">
-				<div className="mr-auto">{this.props.vendorName}</div>
-				<button className="button delete" onClick={this.handleDelete}>Delete</button>
+			<div className="row justify-content-center align-items-center my-4">
+				<div className="text-center text-sm-left col-12 col-sm-5">{this.props.vendorName}</div>
+				<div className="col-12 col-sm-3">	
+					<div className="row justify-content-center">
+						<button className="col-auto btn btn-danger m-2" onClick={this.handleDelete}>Delete</button>
+					</div>
+				</div>
 			</div>
 		);
 	}
 }
-
-
-
 
 
 class MarketsManaged extends React.Component {
@@ -238,7 +239,7 @@ constructor(props) {
 	}
 
 	componentWillUnmount() {
-		this.props.database.ref('markets').off();
+		//this.props.database.ref('markets').off();
 	}
 
 	render() {
@@ -250,11 +251,18 @@ constructor(props) {
 
 	
 		if (this.state.loading) {
-			return <div>Loading...</div>;
-		} else {
 			return (
-				<div className="row justify-content-between">
-					{divString}
+				<div className="row">
+					<div className="col-12 text-center">
+						Loading...
+					</div>
+				</div>
+			);		} else {
+			return (
+				<div className="row">
+					<div className="col-12">
+						{divString}
+					</div>
 				</div>
 			);
 		}
@@ -365,10 +373,14 @@ class VendorItem extends React.Component {
 
 	render() {
 		return (
-			<div className="m-auto col-10 col-sm-8 row align-items-center d-flex">
-				<div className="mr-auto">{this.props.vendorName} is {this.state.isOpen ? 'open' : 'not open'}.</div>
-				<button className="button" onClick={this.state.isOpen ? this.handleClose : this.handleOpen}>Click to {(this.state.isOpen ? 'close' : 'open')}</button>
-				<button className="button delete" onClick={this.handleDelete}>Delete</button>
+			<div className="row justify-content-center align-items-center my-4">
+				<div className="text-center text-sm-left col-12 col-sm-5">{this.props.vendorName} is {this.state.isOpen ? 'open' : 'not open'}.</div>
+				<div className="col-12 col-sm-4">	
+					<div className="row justify-content-center">
+						<button className="col-auto btn btn-secondary m-2" onClick={this.state.isOpen ? this.handleClose : this.handleOpen}>{(this.state.isOpen ? 'Close' : 'Open')}</button>
+						<button className="col-auto btn btn-danger m-2" onClick={this.handleDelete}>Delete</button>
+					</div>
+				</div>
 			</div>
 		);
 	}
@@ -425,7 +437,7 @@ class VendorsManaged extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.props.database.ref('vendors').off();
+		//this.props.database.ref('vendors').off();
 	}
 
 	render() {
@@ -437,11 +449,19 @@ class VendorsManaged extends React.Component {
 
 	
 		if (this.state.loading) {
-			return <div>Loading...</div>;
+			return (
+				<div className="row">
+					<div className = "col-12 text-center">
+						Loading...
+					</div>
+				</div>
+			);
 		} else {
 			return (
-				<div className="row justify-content-between">
-					{divString}
+				<div className="row">
+					<div className = "col-12">
+						{divString}
+					</div>
 				</div>
 			);
 		}
@@ -480,15 +500,45 @@ class CreateVendorForm extends React.Component {
 
 
 		return (
-			<div>
-				<form onSubmit={this.handleSubmit}>
-					<label>
-						Title of space:
-						<input type="text" value={this.state.value} onChange={this.handleChange} />
-					</label>
-					<input type="submit" value="Create" />
-					<button onClick={this.props.goBack}>Cancel</button>
-				</form>
+			<div className="row">
+				<div className="col-12">
+					<div className="row justify-content-center my-4">
+						<div className="col-auto">
+							Create a new vendor
+						</div>
+					</div>
+					
+					
+
+						
+					<form onSubmit={this.handleSubmit}>
+						<label>
+							<div className="row justify-content-center my-4">	
+							
+								<div className="col m-2">
+									Title of space: 
+								</div>
+								<div className="col m-2">
+									<input type="text" value={this.state.value} onChange={this.handleChange} />
+								</div>
+							</div>
+						</label>
+
+						
+						<div className="row justify-content-center my-4">	
+							<div className="col-auto">
+								<input className="btn btn-primary m-2" type="submit" value="Create" />
+								<button className="btn btn-secondary m-2" onClick={this.props.goBack}>Cancel</button>
+							</div>
+
+
+						
+
+						
+
+						</div>
+					</form>
+				</div>
 			</div>
 		);
 	}
@@ -521,18 +571,18 @@ class MarketsCycle extends React.Component {
 		if (tabIsLive) {
 			if (isFirstCycle) {
 				return (
-					<div className="tab bottom row justify-content-center align-items-center">
-						<div className="justify-content-center">
+					<div className="tab bottom row">
+						<div className="col-12">
 							<MarketsManaged authUser={this.props.isLoggedIn} database={this.props.database} />
 						</div>
 						<div className='col-12 d-flex justify-content-center'>	
-							<button className = "button m-4" onClick={this.handleForward}>{this.props.createText}</button>
+							<button className = "btn btn-primary m-4" onClick={this.handleForward}>{this.props.createText}</button>
 						</div>						
 					</div>
 				);	
 			} else {
 				return (
-					<div className="tab bottom row justify-content-center align-items-center">
+					<div className="tab bottom row">
 						<div className="justify-content-center">
 							<CreateMarketForm authUser={this.props.isLoggedIn} database={this.props.database} goBack={this.handleBackward}/>
 						</div>
@@ -568,19 +618,19 @@ class VendorsCycle extends React.Component {
 		if (tabIsLive) {
 			if (isFirstCycle) {
 				return (
-					<div className="tab bottom row justify-content-center align-items-center">
-						<div className="justify-content-center">
+					<div className="tab bottom row">
+						<div className="col-12">
 							<VendorsManaged authUser={this.props.isLoggedIn} database={this.props.database} />
 						</div>
 						<div className='col-12 d-flex justify-content-center'>	
-							<button className = "button m-4" onClick={this.handleForward}>{this.props.createText}</button>
+							<button className = "btn btn-primary m-4" onClick={this.handleForward}>{this.props.createText}</button>
 						</div>						
 					</div>
 				);	
 			} else {
 				return (
-					<div className="tab bottom row justify-content-center align-items-center">
-						<div className="justify-content-center">
+					<div className="tab bottom row">
+						<div className="col-12">
 							<CreateVendorForm authUser={this.props.isLoggedIn} database={this.props.database} goBack={this.handleBackward}/>
 						</div>
 					</div>
@@ -616,27 +666,34 @@ class TabbedContainer extends React.Component {
 
 		if (isLoggedIn) {
 			return (
-				<div className="p-2 console-container">	
-					<div className="row flex-row">
-						<button className={`tab ${isFirstTab ? 'live' : 'dead'} col-6 d-flex justify-content-center align-items-center`} onClick={this.goFirstTab}>
-							Markets you own
-						</button>
-						<button className={`tab ${isFirstTab ? 'dead' : 'live'} col-6 d-flex justify-content-center align-items-center`} onClick={this.goSecondTab}>
-							Vendors you own
-						</button>
+				<div className="row p-2 p-sm-4 p-md-5 justify-content-center">
+					<div className="col-12 col-md-10 col-lg-8 col-xl-6">
+						<div className="row">
+							<button className={`tab ${isFirstTab ? 'live' : 'dead'} col-6`} onClick={this.goFirstTab}>
+								Markets you own
+							</button>
+							<button className={`tab ${isFirstTab ? 'dead' : 'live'} col-6`} onClick={this.goSecondTab}>
+								Vendors you own
+							</button>
+						</div>
+					
+						<div className="row">
+							<div className="col-12">
+								<MarketsCycle
+									createText='Create New Market'
+									tabIsLive={isFirstTab ? true : false}
+									isLoggedIn={isLoggedIn}
+									database={this.props.database}
+								/>
+								<VendorsCycle
+									createText='Create New Vendor'
+									tabIsLive={isFirstTab ? false : true}
+									isLoggedIn={isLoggedIn}
+									database={this.props.database}
+								/>
+							</div>
+						</div>
 					</div>
-					<MarketsCycle
-						createText='Create New Market'
-						tabIsLive={isFirstTab ? true : false}
-						isLoggedIn={isLoggedIn}
-						database={this.props.database}
-					/>
-					<VendorsCycle
-						createText='Create New Vendor'
-						tabIsLive={isFirstTab ? false : true}
-						isLoggedIn={isLoggedIn}
-						database={this.props.database}
-					/>
 				</div>
 			);
 		} else {
