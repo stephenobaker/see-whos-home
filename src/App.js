@@ -212,7 +212,7 @@ constructor(props) {
 			
 			if (item.user_id === this.props.authUser.uid) {
 				newState.push({
-					name: item.vendor_name,
+					name: item.market_name,
 					key: key
 				});
 			}
@@ -293,8 +293,7 @@ class CreateMarketForm extends React.Component {
 	handleSubmit(event) {
 		this.props.database.ref('markets').push().set({
 			user_id: this.props.authUser.uid,
-			vendor_name: this.state.value,
-			vendor_present: false
+			market_name: this.state.value
 		});
 		event.preventDefault();
 		this.setState({value: ''});
@@ -306,19 +305,33 @@ class CreateMarketForm extends React.Component {
 
 
 		return (
-			<div>
-				<form onSubmit={this.handleSubmit}>
-					<label>
-						Title of space:
-						<input type="text" value={this.state.value} onChange={this.handleChange} />
-					</label>
-					<input type="submit" value="Submit" />
-					<button onClick={this.props.goBack}>Cancel</button>
-				</form>
+			<div className="row justify-content-center">
+				<div className="col-auto">
+					<div className="row justify-content-center my-4">
+						<div className="col-auto">
+							Create a new market
+						</div>
+					</div>
+					<form onSubmit={this.handleSubmit}>
+						<div className="form-group">
+							<label htmlFor="nameInput">Market name:</label>
+							<input id="nameInput" className="form-control" type="text" value={this.state.value} onChange={this.handleChange} />
+						</div>
+						<div className="row justify-content-center my-4">	
+							<div className="col-auto">
+								<input className="btn btn-primary m-2" type="submit" value="Create" />
+							</div>
+							<div className="col-auto">
+								<button className="btn btn-secondary m-2" onClick={this.props.goBack}>Cancel</button>
+							</div>
+						</div>
+					</form>
+				</div>
 			</div>
 		);
 	}
 }
+
 
 
 class VendorItem extends React.Component {
@@ -482,21 +495,32 @@ class CreateVendorForm extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			value: ''
+			valueName: '',
+			valueMarket: ''
 		};
 
-		this.handleChange = this.handleChange.bind(this);
+		this.handleName = this.handleName.bind(this);
+		this.handleMarket = this.handleMarket.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
-	handleChange(event) {
-		this.setState({value: event.target.value});
+	handleName(event) {
+		this.setState({
+			valueName: event.target.value
+		});
+	}
+
+	handleMarket(event) {
+		this.setState({
+			valueMarket: event.target.value
+		});
 	}
 
 	handleSubmit(event) {
 		this.props.database.ref('vendors').push().set({
 			user_id: this.props.authUser.uid,
-			vendor_name: this.state.value,
+			vendor_name: this.state.valueName,
+			vendor_market: this.state.valueMarket,
 			vendor_present: false
 		});
 		event.preventDefault();
@@ -507,46 +531,37 @@ class CreateVendorForm extends React.Component {
 	render() {
 		const isLoggedIn = this.props.authUser;
 
-
 		return (
-			<div className="row">
-				<div className="col-12">
+			<div className="row justify-content-center">
+				<div className="col-auto">
 					<div className="row justify-content-center my-4">
 						<div className="col-auto">
 							Create a new vendor
 						</div>
 					</div>
-					
-					
-
-						
 					<form onSubmit={this.handleSubmit}>
-						<label>
-							<div className="row justify-content-center my-4">	
-							
-								<div className="col m-2">
-									Title of space: 
-								</div>
-								<div className="col m-2">
-									<input type="text" value={this.state.value} onChange={this.handleChange} />
-								</div>
-							</div>
-						</label>
-
-						
+						<div className="form-group">
+							<label htmlFor="nameInput">Vendor name:</label>
+							<input id="nameInput" className="form-control" type="text" value={this.state.valueName} onChange={this.handleName} />
+						</div>
+						<div className="form-group">
+							<label htmlFor="marketSelect">Sells at:</label>
+							<select id="marketSelect" className="form-control" type="text" value={this.state.valueMarket} onChange={this.handleMarket}>
+								<option>Market Example 1</option>
+								<option>Market Example 2</option>
+								<option>Market Example 3</option>
+								<option>Market Example 4</option>
+							</select>
+						</div>
 						<div className="row justify-content-center my-4">	
 							<div className="col-auto">
 								<input className="btn btn-primary m-2" type="submit" value="Create" />
+							</div>
+							<div className="col-auto">
 								<button className="btn btn-secondary m-2" onClick={this.props.goBack}>Cancel</button>
 							</div>
-
-
-						
-
-						
-
 						</div>
-					</form>
+					</form>				
 				</div>
 			</div>
 		);
@@ -592,7 +607,7 @@ class MarketsCycle extends React.Component {
 			} else {
 				return (
 					<div className="tab bottom row">
-						<div className="justify-content-center">
+						<div className="col-12">
 							<CreateMarketForm authUser={this.props.isLoggedIn} database={this.props.database} goBack={this.handleBackward}/>
 						</div>
 					</div>
@@ -678,12 +693,16 @@ class TabbedContainer extends React.Component {
 				<div className="row p-2 p-sm-4 p-md-5 justify-content-center">
 					<div className="col-12 col-md-10 col-lg-8 col-xl-6">
 						<div className="row">
-							<button className={`tab ${isFirstTab ? 'live' : 'dead'} col-6`} onClick={this.goFirstTab}>
-								<em>Markets</em>
-							</button>
-							<button className={`tab ${isFirstTab ? 'dead' : 'live'} col-6`} onClick={this.goSecondTab}>
-								<em>Vendors</em>
-							</button>
+							<div className={`tab ${isFirstTab ? 'live' : 'dead'} col-6`}>
+								<div className="row justify-content-center">
+									<button className="btn btn-link col-auto" onClick={this.goFirstTab}>Markets</button>
+								</div>
+							</div>
+							<div className={`tab ${isFirstTab ? 'dead' : 'live'} col-6`}>
+								<div className="row justify-content-center">
+									<button className="btn btn-link col-auto" onClick={this.goSecondTab}>Vendors</button>
+								</div>
+							</div>
 						</div>
 					
 						<div className="row">
@@ -713,7 +732,27 @@ class TabbedContainer extends React.Component {
 
 
 
+function PublicMarketTest(props) {
+	const vendors = props.vendors;
+	const vendorsList = vendors.map((vendor) =>
+		<div key={vendor.key}>{vendor.vendor_name}</div>
+	);
 
+	const markets = props.markets;
+	const marketsList = markets.map((market) =>
+		<div key={market.key}>{market.market_name}</div>
+	);
+	console.log(markets);
+
+	return (
+		<div>
+			<h1>Markets:</h1>
+			{marketsList}
+			<h1>Vendors:</h1>
+			{vendorsList}
+		</div>
+	);
+}
 
 
 
@@ -722,7 +761,10 @@ class FirebaseLogin extends React.Component {
 		super(props);
 		this.state = {
 			authUser: null,
-			waiting: true
+			waiting: true,
+			loading: true,
+			vendors: [],
+			markets: []
 		};
 		this.signIn = this.signIn.bind(this);
 		this.signOut = this.signOut.bind(this);
@@ -746,6 +788,12 @@ class FirebaseLogin extends React.Component {
 	}
 
 	componentDidMount() {
+		const vendorsRef = firebase.database().ref('vendors');
+		const marketsRef = firebase.database().ref('markets');
+
+		let vendors = [];
+		let markets = [];
+
 		firebase.auth().onAuthStateChanged(user => {
 			if (user) {
 				this.setState({
@@ -759,6 +807,121 @@ class FirebaseLogin extends React.Component {
 				});
 			}
 		});
+		
+
+		vendorsRef.on('child_added', (snapshot) => {
+			let item = snapshot.val();
+			let key = snapshot.key;
+			console.log(item.vendor_name);
+			
+			vendors.push({
+				name: item.vendor_name,
+				present: item.vendor_present,
+				market: item.vendor_market,
+				userId: item.user_id,
+				key: key
+			});
+			
+			this.setState({
+				vendors: vendors,
+				loading: false
+			});
+		});
+
+		marketsRef.on('child_added', (snapshot) => {
+			let item = snapshot.val();
+			let key = snapshot.key;
+			
+			markets.push({
+				name: item.vendor_name,
+				userId: item.user_id,
+				key: key
+			});
+			
+			this.setState({
+				markets: markets,
+				loading: false
+			});
+		});
+
+		vendorsRef.on('child_changed', (snapshot) => {
+			let item = snapshot.val();
+			let key = snapshot.key;
+			
+			let newData = {
+				name: item.vendor_name,
+				present: item.vendor_present,
+				market: item.vendor_market,
+				userId: item.user_id,
+				key: key
+			};
+			
+			for (var i = 0; i < vendors.length; i++) {
+				if (vendors[i].key == key) {
+					vendors.splice(i, 1, newData);
+				}
+			}
+			
+			this.setState({
+				vendors: vendors,
+				loading: false
+			});
+		});
+
+		marketsRef.on('child_changed', (snapshot) => {
+			let item = snapshot.val();
+			let key = snapshot.key;
+			
+			let newData = {
+				name: item.market_name,
+				userId: item.user_id,
+				key: key
+			};
+			
+			for (var i = 0; i < markets.length; i++) {
+				if (markets[i].key == key) {
+					markets.splice(i, 1, newData);
+				}
+			}
+			
+			this.setState({
+				markets: markets,
+				loading: false
+			});
+		});
+
+		vendorsRef.on('child_removed', (snapshot) => {
+			let key = snapshot.key;
+			for (var i = 0; i < vendors.length; i++) {
+				if (vendors[i].key == key) {
+					vendors.splice(i, 1);
+				}
+			}
+			
+			this.setState({
+				vendors: vendors,
+				loading: false
+			});
+		});
+
+		marketsRef.on('child_removed', (snapshot) => {
+			let key = snapshot.key;
+			for (var i = 0; i < markets.length; i++) {
+				if (markets[i].key == key) {
+					markets.splice(i, 1);
+				}
+			}
+			
+			this.setState({
+				markets: markets,
+				loading: false
+			});
+		});
+	}
+
+	componentWillUnmount() {
+		this.props.database.ref('vendors').off();
+		this.props.database.ref('markets').off();
 	}
 
 	render() {
@@ -771,12 +934,13 @@ class FirebaseLogin extends React.Component {
 		return (
 			<div className="container-fluid app-global">
 				<NavigationBar isWaiting={isWaiting} isLoggedIn={isLoggedIn} signIn={this.signIn} signOut={this.signOut} />
-				<TabbedContainer isLoggedIn={isLoggedIn} database={this.props.database} />
+				<TabbedContainer isLoggedIn={isLoggedIn} database={database} />
+				<PublicMarketTest vendors={this.state.vendors} markets={this.state.markets}/>
 				
 				{isLoggedIn? (
 					null
 				) : (
-					<PublicMarketTable isLoggedIn={isLoggedIn} database={this.props.database} />
+					<PublicMarketTable isLoggedIn={isLoggedIn} database={database} />
 				)}
     		</div>
 		);
