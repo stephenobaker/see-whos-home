@@ -759,7 +759,7 @@ function PublicMarketTest(props) {
 
 
 
-class FirebaseLogin extends React.Component {
+class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -775,6 +775,8 @@ class FirebaseLogin extends React.Component {
 	}
 
 	signIn() {
+		const provider = new firebase.auth.GoogleAuthProvider();
+
 		firebase.auth().signInWithRedirect(this.props.provider).then(function(result) {
 		  var token = result.credential.accessToken;
 		  var user = result.user;
@@ -792,8 +794,8 @@ class FirebaseLogin extends React.Component {
 	}
 
 	componentDidMount() {
-		let vendorsRef = this.props.database.ref('vendors');
-		let marketsRef = this.props.database.ref('markets');
+		let vendorsRef = firebase.database().ref('vendors');
+		let marketsRef = firebase.database().ref('markets');
 
 		let vendors = [];
 		let markets = [];
@@ -816,7 +818,7 @@ class FirebaseLogin extends React.Component {
 		vendorsRef.on('child_added', (snapshot) => {
 			let item = snapshot.val();
 			let key = snapshot.key;
-			
+
 			vendors.push({
 				name: item.vendor_name,
 				present: item.vendor_present,
@@ -926,14 +928,16 @@ class FirebaseLogin extends React.Component {
 	render() {
 		const isWaiting = this.state.waiting;
 		const isLoggedIn = this.state.authUser;
-		const database = this.props.database;
+		const database = firebase.database();
 		const isMarketsLoading = this.state.marketsLoading;
 		const isVendorsLoading = this.state.vendorsLoading;
 		const props = {
 			'isWaiting': this.state.waiting,
 			'isLoggedIn': this.state.authUser,
 			'signIn': this.signIn,
-			'signOut': this.signOut
+			'signOut': this.signOut,
+			'vendors': this.state.vendors,
+			'markets': this.state.markets
 		};
 		
 
@@ -941,12 +945,13 @@ class FirebaseLogin extends React.Component {
 		return (
 			<div className="container-fluid app-global">
 				<NavigationBar {...props} />
-				<TabbedContainer isLoggedIn={isLoggedIn} database={database} />
+
+				<TabbedContainer isLoggedIn={isLoggedIn} database={database} {...props}/>
 				
 				{(isVendorsLoading || isMarketsLoading) ? (
 					null
 				) : (
-					<PublicMarketTest vendors={this.state.vendors} markets={this.state.markets}/>
+					<PublicMarketTest {...props}/>
 				)}
 
 				
@@ -962,39 +967,4 @@ class FirebaseLogin extends React.Component {
 	}
 }
 
-
-
-
-
-
-
-//TODO: This will eventualy just have FirebaseLogin component, (or rather FirebaseLogin will be renamed App and replace this as a class declaration)
-
-
-class App extends React.Component {
-	constructor(props) {
-		super(props);
-	}
-
-	componentDidMount() {
-		
-	}
-
-	render() {
-		const props = {
-			provider: new firebase.auth.GoogleAuthProvider(),
-			database: firebase.database()
-		};
-
-		return <FirebaseLogin {...props} />;
-	}
-
-  
-}
-
 export default hot(module)(App);
-
-
-
-
-
