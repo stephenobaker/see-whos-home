@@ -239,7 +239,7 @@ constructor(props) {
 	}
 
 	componentWillUnmount() {
-		//this.props.database.ref('markets').off();
+		this.props.database.ref('markets').off();
 	}
 
 	render() {
@@ -435,14 +435,13 @@ class VendorsManaged extends React.Component {
 			}
 			
 			this.setState({
-				items: newState,
-				loading: false
+				items: newState
 			});
 		});		
 	}
 
 	componentWillUnmount() {
-		//this.props.database.ref('vendors').off();
+		this.props.database.ref('vendors').off();
 	}
 
 	render() {
@@ -680,10 +679,10 @@ class TabbedContainer extends React.Component {
 					<div className="col-12 col-md-10 col-lg-8 col-xl-6">
 						<div className="row">
 							<button className={`tab ${isFirstTab ? 'live' : 'dead'} col-6`} onClick={this.goFirstTab}>
-								Markets you own
+								<em>Markets</em>
 							</button>
 							<button className={`tab ${isFirstTab ? 'dead' : 'live'} col-6`} onClick={this.goSecondTab}>
-								Vendors you own
+								<em>Vendors</em>
 							</button>
 						</div>
 					
