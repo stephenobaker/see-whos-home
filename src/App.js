@@ -929,12 +929,18 @@ class FirebaseLogin extends React.Component {
 		const database = this.props.database;
 		const isMarketsLoading = this.state.marketsLoading;
 		const isVendorsLoading = this.state.vendorsLoading;
+		const props = {
+			'isWaiting': this.state.waiting,
+			'isLoggedIn': this.state.authUser,
+			'signIn': this.signIn,
+			'signOut': this.signOut
+		};
 		
 
 
 		return (
 			<div className="container-fluid app-global">
-				<NavigationBar isWaiting={isWaiting} isLoggedIn={isLoggedIn} signIn={this.signIn} signOut={this.signOut} />
+				<NavigationBar {...props} />
 				<TabbedContainer isLoggedIn={isLoggedIn} database={database} />
 				
 				{(isVendorsLoading || isMarketsLoading) ? (
