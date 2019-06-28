@@ -79,7 +79,7 @@ function NavigationBar(props) {
 }
 
 
-class PublicMarketTable extends React.Component {
+/*class PublicMarketTable extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -160,177 +160,7 @@ class PublicMarketTable extends React.Component {
 		return <div>{publicOutput}</div>
 		
 	}
-}
-
-
-
-class MarketItem extends React.Component {
-	constructor(props) {
-		super(props);
-
-		this.handleDelete = this.handleDelete.bind(this);
-
-	}
-
-	handleDelete() {
-		const databaseRef = this.props.database.ref('markets/' + this.props.yourKey);
-		databaseRef.remove();
-	}
-
-	render() {
-		return (
-			<div className="row justify-content-center align-items-center my-4">
-				<div className="text-center text-sm-left col-12 col-sm-5">{this.props.vendorName}</div>
-				<div className="col-12 col-sm-3">	
-					<div className="row justify-content-center">
-						<button className="col-auto btn btn-danger m-2" onClick={this.handleDelete}>Delete</button>
-					</div>
-				</div>
-			</div>
-		);
-	}
-}
-
-
-class MarketsManaged extends React.Component {
-constructor(props) {
-		super(props);
-
-		this.state = ({
-			loading: true,
-			items: []
-		});
-	}
-
-	componentDidMount() {
-		const databaseRef = this.props.database.ref('markets');
-		let newState = [];
-
-		databaseRef.on('child_added', (snapshot) => {
-			let item = snapshot.val();
-			let key = snapshot.key;
-			
-			if (item.user_id === this.props.authUser.uid) {
-				newState.push({
-					name: item.market_name,
-					key: key
-				});
-			}
-			
-			this.setState({
-				items: newState,
-				loading: false
-			});
-		});
-
-		databaseRef.on('child_removed', (snapshot) => {
-			let key = snapshot.key;
-			for (var i = 0; i < newState.length; i++) {
-				if (newState[i].key == key) {
-					newState.splice(i, 1);
-				}
-			}
-			
-			this.setState({
-				items: newState,
-				loading: false
-			});
-		});
-	}
-
-	componentWillUnmount() {
-		//this.props.database.ref('markets').off();
-	}
-
-	render() {
-		const divString = this.state.items.map((item) =>
-			<MarketItem key={item.key} yourKey={item.key} vendorName={item.name} database={this.props.database} authUser={this.props.authUser} />
-		);
-		
-
-
-	
-		if (this.state.loading) {
-			return (
-				<div className="row">
-					<div className="col-12 text-center">
-						Loading...
-					</div>
-				</div>
-			);		} else {
-			return (
-				<div className="row">
-					<div className="col-12">
-						<div className="row justify-content-center my-4">
-							<div className="col-auto">
-								Markets you own
-							</div>
-						</div>
-						{divString}
-					</div>
-				</div>
-			);
-		}
-	}
-}
-
-
-class CreateMarketForm extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			value: ''
-		};
-
-		this.handleChange = this.handleChange.bind(this);
-		this.handleSubmit = this.handleSubmit.bind(this);
-	}
-
-	handleChange(event) {
-		this.setState({value: event.target.value});
-	}
-
-	handleSubmit(event) {
-		this.props.database.ref('markets').push().set({
-			user_id: this.props.authUser.uid,
-			market_name: this.state.value
-		});
-		event.preventDefault();
-		this.setState({value: ''});
-		this.props.goBack();
-	}
-
-	render() {
-		const isLoggedIn = this.props.isLoggedIn;
-
-
-		return (
-			<div className="row justify-content-center">
-				<div className="col-auto">
-					<div className="row justify-content-center my-4">
-						<div className="col-auto">
-							Create a new market
-						</div>
-					</div>
-					<form onSubmit={this.handleSubmit}>
-						<div className="form-group">
-							<label htmlFor="nameInput">Market name:</label>
-							<input id="nameInput" className="form-control" type="text" value={this.state.value} onChange={this.handleChange} />
-						</div>
-						<div className="row justify-content-center my-4">	
-							<div className="col-auto">
-								<input className="btn btn-primary m-2" type="submit" value="Create" />
-							</div>
-							<div className="col-auto">
-								<button className="btn btn-secondary m-2" onClick={this.props.goBack}>Cancel</button>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		);
-	}
-}
+}*/
 
 
 class VendorItem extends React.Component {
@@ -377,6 +207,35 @@ class VendorItem extends React.Component {
 }
 
 
+class MarketItem extends React.Component {
+	constructor(props) {
+		super(props);
+		this.handleDelete = this.handleDelete.bind(this);
+	}
+
+	handleDelete() {
+		this.props.itemRef.remove();
+	}
+
+	render() {
+		if (this.props.userId === this.props.isLoggedIn.uid) {
+			return (
+				<div className="row justify-content-center align-items-center my-4">
+					<div className="text-center text-sm-left col-12 col-sm-5">{this.props.name}</div>
+					<div className="col-12 col-sm-3">	
+						<div className="row justify-content-center">
+							<button className="col-auto btn btn-danger m-2" onClick={this.handleDelete}>Delete</button>
+						</div>
+					</div>
+				</div>
+			);
+		} else {
+			return null;
+		}
+	}
+}
+
+
 function VendorsManaged(props) {
 	const divString = props.vendors.map((item) =>
 		<VendorItem key={item.key} name={item.name} userId={item.userId} isLoggedIn={props.isLoggedIn} present={item.present} itemRef={firebase.database().ref(`vendors/${item.key}`)} />
@@ -397,6 +256,81 @@ function VendorsManaged(props) {
 }
 
 
+function MarketsManaged(props) {
+	const divString = props.markets.map((item) =>
+		<MarketItem key={item.key} name={item.name} userId={item.userId} isLoggedIn={props.isLoggedIn} itemRef={firebase.database().ref(`markets/${item.key}`)} />
+	);
+			
+	return (
+		<div className="row">
+			<div className="col-12">
+				<div className="row justify-content-center my-4">
+					<div className="col-auto">
+						Markets you own
+					</div>
+				</div>
+				{divString}
+			</div>
+		</div>
+	);
+}
+
+
+class CreateMarketForm extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			value: ''
+		};
+
+		this.handleChange = this.handleChange.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
+	}
+
+	handleChange(event) {
+		this.setState({value: event.target.value});
+	}
+
+	handleSubmit(event) {
+		this.props.database.ref('markets').push().set({
+			user_id: this.props.isLoggedIn.uid,
+			market_name: this.state.value
+		});
+		event.preventDefault();
+		this.setState({value: ''});
+		this.props.goBack();
+	}
+
+	render() {
+		return (
+			<div className="row justify-content-center">
+				<div className="col-auto">
+					<div className="row justify-content-center my-4">
+						<div className="col-auto">
+							Create a new market
+						</div>
+					</div>
+					<form onSubmit={this.handleSubmit}>
+						<div className="form-group">
+							<label htmlFor="nameInput">Market name:</label>
+							<input id="nameInput" className="form-control" type="text" value={this.state.value} onChange={this.handleChange} />
+						</div>
+						<div className="row justify-content-center my-4">	
+							<div className="col-auto">
+								<input className="btn btn-primary m-2" type="submit" value="Create" />
+							</div>
+							<div className="col-auto">
+								<button className="btn btn-secondary m-2" onClick={this.props.goBack}>Cancel</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		);
+	}
+}
+
+
 class CreateVendorForm extends React.Component {
 	constructor(props) {
 		super(props);
@@ -411,15 +345,11 @@ class CreateVendorForm extends React.Component {
 	}
 
 	handleName(event) {
-		this.setState({
-			valueName: event.target.value
-		});
+		this.setState({valueName: event.target.value});
 	}
 
 	handleMarket(event) {
-		this.setState({
-			valueMarket: event.target.value
-		});
+		this.setState({valueMarket: event.target.value});
 	}
 
 	handleSubmit(event) {
@@ -506,7 +436,7 @@ class MarketsCycle extends React.Component {
 				return (
 					<div className="tab bottom row">
 						<div className="col-12">
-							<MarketsManaged authUser={this.props.isLoggedIn} database={this.props.database} {...this.props} />
+							<MarketsManaged {...this.props} />
 						</div>
 						<div className='col-12 d-flex justify-content-center'>	
 							<button className = "btn btn-primary m-4" onClick={this.handleForward}>{this.props.createText}</button>
@@ -517,7 +447,7 @@ class MarketsCycle extends React.Component {
 				return (
 					<div className="tab bottom row">
 						<div className="col-12">
-							<CreateMarketForm authUser={this.props.isLoggedIn} database={this.props.database} goBack={this.handleBackward}/>
+							<CreateMarketForm {...this.props} goBack={this.handleBackward}/>
 						</div>
 					</div>
 				);
@@ -639,26 +569,31 @@ class TabbedContainer extends React.Component {
 
 
 
-function PublicMarketTest(props) {
-	const vendors = props.vendors;
-	const vendorsList = vendors.map((vendor) =>
-		<div key={vendor.key}>{vendor.name}</div>
-	);
-
-	const markets = props.markets;
-	const marketsList = markets.map((market) =>
-		<div key={market.key}>{market.name}</div>
-	);
+class PublicMarketView extends React.Component {
+	constructor(props) {
+		super(props);
+	}
 
 
-	return (
-		<div>
-			<h1>Markets:</h1>
-			{marketsList}
-			<h1>Vendors:</h1>
-			{vendorsList}
-		</div>
+
+	render() {
+	const vendorsList = this.props.vendors.map((vendor) =>
+		<div className="col-12" key={vendor.key}>{vendor.name}</div>
 	);
+
+	const marketsList = this.props.markets.map((market) =>
+		<div className="col-12" key={market.key}>{market.name}</div>
+	);
+
+		return (
+			<div className="row flex-column justify-content-center text-center">
+				<h1 className="col-12">Markets:</h1>
+				{marketsList}
+				<h1 className="col-12">Vendors:</h1>
+				{vendorsList}
+			</div>
+		);	
+	}
 }
 
 
@@ -851,19 +786,16 @@ class App extends React.Component {
 			<div className="container-fluid app-global">
 				<NavigationBar {...props} />
 
-				<TabbedContainer {...props}/>
-				
 				{(isVendorsLoading || isMarketsLoading) ? (
 					<div>Loading databases...</div>
 				) : (
-					<PublicMarketTest {...props}/>
+					<TabbedContainer {...props}/>
 				)}
-
 				
 				{props.isLoggedIn ? (
 					null
 				) : (
-					<PublicMarketTable {...props} />
+					<PublicMarketView {...props} />
 				)}
     		</div>
 		);
