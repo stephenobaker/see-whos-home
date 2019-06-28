@@ -343,51 +343,32 @@ class VendorItem extends React.Component {
 		this.handleDelete = this.handleDelete.bind(this);
 	}
 
-	/*componentDidMount() {
-		
-		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey + '/vendor_present');
-		
-		databaseRef.on('value', (snapshot) => {
-			let isOpen = snapshot.val();			
-			
-			this.setState({
-				isOpen: isOpen
-			});
-
-		});
-
-	}
-
-	componentWillUnmount() {
-		//this.props.database.ref('vendors/' + this.props.yourKey + '/vendor_present').off();
-	}*/
-
 	handleOpen() {
 
-		const databaseRef = firebase.database().ref('vendors/' + this.props.yourKey);
+		//const databaseRef = firebase.database().ref('vendors/' + this.props.yourKey);
 
-		databaseRef.update({
+		this.props.itemRef.update({
 			vendor_present: true
 		});
 	}
 
 	handleClose() {
 
-		const databaseRef = firebase.database().ref('vendors/' + this.props.yourKey);
+		//const databaseRef = firebase.database().ref('vendors/' + this.props.yourKey);
 
-		databaseRef.update({
+		this.props.itemRef.update({
 			vendor_present: false
 		});
 	}
 
 	handleDelete() {
-		const databaseRef = firebase.database().ref('vendors/' + this.props.yourKey);
-		databaseRef.remove();
+		//const databaseRef = firebase.database().ref('vendors/' + this.props.yourKey);
+		this.props.itemRef.remove();
 	}
 
 	render() {
 		//TODO: NEED TO PASS THIS IN PARENT COMPONENT, AND PASS A BOOLEAN TO THIS
-		if (true){//this.props.vendors.userId === this.props.isLoggedIn.uid) {
+		if (this.props.userId === this.props.isLoggedIn.uid) {
 			return (
 				<div className="row justify-content-center align-items-center my-4">
 					<div className="text-center text-sm-left col-12 col-sm-5">{this.props.name} is {this.props.present ? 'open' : 'not open'}.</div>
@@ -409,7 +390,7 @@ class VendorItem extends React.Component {
 
 function VendorsManaged(props) {
 	const divString = props.vendors.map((item) =>
-		<VendorItem key={item.key} yourKey={item.key} name={item.name} present={item.present} {...props}/>
+		<VendorItem key={item.key} name={item.name} userId={item.userId} isLoggedIn={props.isLoggedIn} present={item.present} itemRef={firebase.database().ref(`vendors/${item.key}`)} />
 	);
 	
 	return (
@@ -711,7 +692,7 @@ class App extends React.Component {
 	signIn() {
 		const provider = new firebase.auth.GoogleAuthProvider();
 
-		firebase.auth().signInWithRedirect(this.props.provider).then(function(result) {
+		firebase.auth().signInWithRedirect(provider).then(function(result) {
 		  var token = result.credential.accessToken;
 		  var user = result.user;
 		}).catch(function(error) {
