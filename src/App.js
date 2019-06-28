@@ -333,41 +333,31 @@ class CreateMarketForm extends React.Component {
 }
 
 
-
 class VendorItem extends React.Component {
 	constructor(props) {
 		super(props);
-
 		this.handleOpen = this.handleOpen.bind(this);
 		this.handleClose = this.handleClose.bind(this);
 		this.handleDelete = this.handleDelete.bind(this);
 	}
 
 	handleOpen() {
-
-		//const databaseRef = firebase.database().ref('vendors/' + this.props.yourKey);
-
 		this.props.itemRef.update({
 			vendor_present: true
 		});
 	}
 
 	handleClose() {
-
-		//const databaseRef = firebase.database().ref('vendors/' + this.props.yourKey);
-
 		this.props.itemRef.update({
 			vendor_present: false
 		});
 	}
 
 	handleDelete() {
-		//const databaseRef = firebase.database().ref('vendors/' + this.props.yourKey);
 		this.props.itemRef.remove();
 	}
 
 	render() {
-		//TODO: NEED TO PASS THIS IN PARENT COMPONENT, AND PASS A BOOLEAN TO THIS
 		if (this.props.userId === this.props.isLoggedIn.uid) {
 			return (
 				<div className="row justify-content-center align-items-center my-4">
@@ -385,7 +375,6 @@ class VendorItem extends React.Component {
 		}
 	}
 }
-
 
 
 function VendorsManaged(props) {
@@ -449,7 +438,9 @@ class CreateVendorForm extends React.Component {
 	}
 
 	render() {
-		//const isLoggedIn = this.props.authUser;
+		const marketList = this.props.markets.map((market) =>
+			<option key={market.key}>{market.name}</option>
+		);
 
 		return (
 			<div className="row justify-content-center">
@@ -467,10 +458,8 @@ class CreateVendorForm extends React.Component {
 						<div className="form-group">
 							<label htmlFor="marketSelect">Sells at:</label>
 							<select id="marketSelect" className="form-control" type="text" value={this.state.valueMarket} onChange={this.handleMarket}>
-								<option>Market Example 1</option>
-								<option>Market Example 2</option>
-								<option>Market Example 3</option>
-								<option>Market Example 4</option>
+								<option>Please choose one</option>
+								{marketList}
 							</select>
 						</div>
 						<div className="row justify-content-center my-4">	
