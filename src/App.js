@@ -341,13 +341,9 @@ class VendorItem extends React.Component {
 		this.handleOpen = this.handleOpen.bind(this);
 		this.handleClose = this.handleClose.bind(this);
 		this.handleDelete = this.handleDelete.bind(this);
-
-		this.state = ({
-			isOpen: false
-		});
 	}
 
-	componentDidMount() {
+	/*componentDidMount() {
 		
 		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey + '/vendor_present');
 		
@@ -364,12 +360,12 @@ class VendorItem extends React.Component {
 
 	componentWillUnmount() {
 		//this.props.database.ref('vendors/' + this.props.yourKey + '/vendor_present').off();
-	}
+	}*/
 
 	handleOpen() {
 
-		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
-		
+		const databaseRef = firebase.database().ref('vendors/' + this.props.yourKey);
+
 		databaseRef.update({
 			vendor_present: true
 		});
@@ -377,117 +373,57 @@ class VendorItem extends React.Component {
 
 	handleClose() {
 
-		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
-		
+		const databaseRef = firebase.database().ref('vendors/' + this.props.yourKey);
+
 		databaseRef.update({
 			vendor_present: false
 		});
 	}
 
 	handleDelete() {
-		const databaseRef = this.props.database.ref('vendors/' + this.props.yourKey);
+		const databaseRef = firebase.database().ref('vendors/' + this.props.yourKey);
 		databaseRef.remove();
 	}
 
 	render() {
-		return (
-			<div className="row justify-content-center align-items-center my-4">
-				<div className="text-center text-sm-left col-12 col-sm-5">{this.props.vendorName} is {this.state.isOpen ? 'open' : 'not open'}.</div>
-				<div className="col-12 col-sm-4">	
-					<div className="row justify-content-center">
-						<button className="col-auto btn btn-secondary m-2" onClick={this.state.isOpen ? this.handleClose : this.handleOpen}>{(this.state.isOpen ? 'Close' : 'Open')}</button>
-						<button className="col-auto btn btn-danger m-2" onClick={this.handleDelete}>Delete</button>
+		//TODO: NEED TO PASS THIS IN PARENT COMPONENT, AND PASS A BOOLEAN TO THIS
+		if (true){//this.props.vendors.userId === this.props.isLoggedIn.uid) {
+			return (
+				<div className="row justify-content-center align-items-center my-4">
+					<div className="text-center text-sm-left col-12 col-sm-5">{this.props.name} is {this.props.present ? 'open' : 'not open'}.</div>
+					<div className="col-12 col-sm-4">	
+						<div className="row justify-content-center">
+							<button className="col-auto btn btn-secondary m-2" onClick={this.props.present ? this.handleClose : this.handleOpen}>{(this.props.present ? 'Close' : 'Open')}</button>
+							<button className="col-auto btn btn-danger m-2" onClick={this.handleDelete}>Delete</button>
+						</div>
 					</div>
 				</div>
-			</div>
-		);
+			);
+		} else {
+			return null;
+		}
 	}
 }
 
 
 
-class VendorsManaged extends React.Component {
-	constructor(props) {
-		super(props);
-
-		this.state = ({
-			loading: true,
-			items: []
-		});
-	}
-
-	componentDidMount() {
-		
-		const databaseRef = this.props.database.ref('vendors');
-		let newState = [];
-
-		databaseRef.on('child_added', (snapshot) => {
-			let item = snapshot.val();
-			let key = snapshot.key;
-			
-			if (item.user_id === this.props.authUser.uid) {
-				newState.push({
-					name: item.vendor_name,
-					key: key
-				});
-			}
-
-			this.setState({
-				items: newState,
-				loading: false
-			});
-
-		});
-
-		databaseRef.on('child_removed', (snapshot) => {
-			let key = snapshot.key;
-			for (var i = 0; i < newState.length; i++) {
-				if (newState[i].key == key) {
-					newState.splice(i, 1);
-				}
-			}
-			
-			this.setState({
-				items: newState
-			});
-		});		
-	}
-
-	componentWillUnmount() {
-		//this.props.database.ref('vendors').off();
-	}
-
-	render() {
-		const divString = this.state.items.map((item) =>
-			<VendorItem key={item.key} yourKey={item.key} vendorName={item.name} database={this.props.database} authUser={this.props.authUser} />
-		);
-		
-
-
+function VendorsManaged(props) {
+	const divString = props.vendors.map((item) =>
+		<VendorItem key={item.key} yourKey={item.key} name={item.name} present={item.present} {...props}/>
+	);
 	
-		if (this.state.loading) {
-			return (
-				<div className="row">
-					<div className = "col-12 text-center">
-						Loading...
+	return (
+		<div className="row">
+			<div className = "col-12">
+				<div className="row justify-content-center my-4">
+					<div className="col-auto">
+						Vendors you own
 					</div>
 				</div>
-			);
-		} else {
-			return (
-				<div className="row">
-					<div className = "col-12">
-						<div className="row justify-content-center my-4">
-							<div className="col-auto">
-								Vendors you own
-							</div>
-						</div>
-						{divString}
-					</div>
-				</div>
-			);
-		}
-	}
+				{divString}
+			</div>
+		</div>
+	);
 }
 
 
@@ -518,7 +454,7 @@ class CreateVendorForm extends React.Component {
 
 	handleSubmit(event) {
 		this.props.database.ref('vendors').push().set({
-			user_id: this.props.authUser.uid,
+			user_id: this.props.isLoggedIn.uid,
 			vendor_name: this.state.valueName,
 			vendor_market: this.state.valueMarket,
 			vendor_present: false
@@ -532,7 +468,7 @@ class CreateVendorForm extends React.Component {
 	}
 
 	render() {
-		const isLoggedIn = this.props.authUser;
+		//const isLoggedIn = this.props.authUser;
 
 		return (
 			<div className="row justify-content-center">
@@ -600,7 +536,7 @@ class MarketsCycle extends React.Component {
 				return (
 					<div className="tab bottom row">
 						<div className="col-12">
-							<MarketsManaged authUser={this.props.isLoggedIn} database={this.props.database} />
+							<MarketsManaged authUser={this.props.isLoggedIn} database={this.props.database} {...this.props} />
 						</div>
 						<div className='col-12 d-flex justify-content-center'>	
 							<button className = "btn btn-primary m-4" onClick={this.handleForward}>{this.props.createText}</button>
@@ -647,7 +583,7 @@ class VendorsCycle extends React.Component {
 				return (
 					<div className="tab bottom row">
 						<div className="col-12">
-							<VendorsManaged authUser={this.props.isLoggedIn} database={this.props.database} />
+							<VendorsManaged {...this.props} />
 						</div>
 						<div className='col-12 d-flex justify-content-center'>	
 							<button className = "btn btn-primary m-4" onClick={this.handleForward}>{this.props.createText}</button>
@@ -658,7 +594,7 @@ class VendorsCycle extends React.Component {
 				return (
 					<div className="tab bottom row">
 						<div className="col-12">
-							<CreateVendorForm authUser={this.props.isLoggedIn} database={this.props.database} goBack={this.handleBackward}/>
+							<CreateVendorForm {...this.props} goBack={this.handleBackward}/>
 						</div>
 					</div>
 				);
@@ -713,14 +649,12 @@ class TabbedContainer extends React.Component {
 								<MarketsCycle
 									createText='Create New Market'
 									tabIsLive={isFirstTab ? true : false}
-									isLoggedIn={isLoggedIn}
-									database={this.props.database}
+									{...this.props}
 								/>
 								<VendorsCycle
 									createText='Create New Vendor'
 									tabIsLive={isFirstTab ? false : true}
-									isLoggedIn={isLoggedIn}
-									database={this.props.database}
+									{...this.props}
 								/>
 							</div>
 						</div>
@@ -926,9 +860,9 @@ class App extends React.Component {
 	}
 
 	render() {
-		const isWaiting = this.state.waiting;
-		const isLoggedIn = this.state.authUser;
-		const database = firebase.database();
+		//const isWaiting = this.state.waiting;
+		//const isLoggedIn = this.state.authUser;
+		//const database = firebase.database();
 		const isMarketsLoading = this.state.marketsLoading;
 		const isVendorsLoading = this.state.vendorsLoading;
 		const props = {
@@ -937,7 +871,8 @@ class App extends React.Component {
 			'signIn': this.signIn,
 			'signOut': this.signOut,
 			'vendors': this.state.vendors,
-			'markets': this.state.markets
+			'markets': this.state.markets,
+			'database': firebase.database()
 		};
 		
 
@@ -946,24 +881,22 @@ class App extends React.Component {
 			<div className="container-fluid app-global">
 				<NavigationBar {...props} />
 
-				<TabbedContainer isLoggedIn={isLoggedIn} database={database} {...props}/>
+				<TabbedContainer {...props}/>
 				
 				{(isVendorsLoading || isMarketsLoading) ? (
-					null
+					<div>Loading databases...</div>
 				) : (
 					<PublicMarketTest {...props}/>
 				)}
 
 				
-				{isLoggedIn ? (
+				{props.isLoggedIn ? (
 					null
 				) : (
-					<PublicMarketTable isLoggedIn={isLoggedIn} database={database} />
+					<PublicMarketTable {...props} />
 				)}
     		</div>
 		);
-
-
 	}
 }
 
