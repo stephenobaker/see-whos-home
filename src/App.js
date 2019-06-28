@@ -3,13 +3,15 @@ import {hot} from "react-hot-loader";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./App.css";
 
+import * as firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/database";
 
-var firebase = require('firebase/app');
+/*var firebase = require('firebase/app');
 require('firebase/auth');
-require('firebase/database');
+require('firebase/database');*/
 
-//For development only. This won't be needed when app is served via Firebase Hosting as custom URL's will be faster
-firebase.initializeApp({
+const firebaseConfig = {
 	apiKey: "AIzaSyA3aZhoexP5H34RieRCDBweQzX8sh0FVaU",
 	authDomain: "see-whos-home.firebaseapp.com",
 	databaseURL: "https://see-whos-home.firebaseio.com",
@@ -17,7 +19,9 @@ firebase.initializeApp({
 	storageBucket: "see-whos-home.appspot.com",
 	messagingSenderId: "387834386778",
 	appId: "1:387834386778:web:531910cc4e358641"
-});
+};
+
+firebase.initializeApp(firebaseConfig);
 
 
 function WaitingMessage(props) {

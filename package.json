@@ -4,7 +4,8 @@
   "description": "A way for vendors to physically check in or state their expected in-person time at a co-working space, and for customers to quickly see which vendors will be present in a market or co-working space during a given timeframe.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode production"
   },
   "author": "",
   "license": "ISC",

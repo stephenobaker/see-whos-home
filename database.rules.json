@@ -1,6 +1,15 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
+    ".read": "true",
+    "vendors": {
+    	"$vendor": {
+    		".write": "(!data.exists() && newData.child('user_id').val() == auth.uid) || (data.child('user_id').val() == auth.uid)"
+    	}
+    },
+    "markets": {
+    	"$market": {
+    		".write": "(!data.exists() && newData.child('user_id').val() == auth.uid) || (data.child('user_id').val() == auth.uid)"
+    	}
+    }
   }
 }
