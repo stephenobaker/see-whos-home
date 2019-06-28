@@ -237,9 +237,26 @@ class MarketItem extends React.Component {
 
 
 function VendorsManaged(props) {
-	const divString = props.vendors.map((item) =>
+	let vendorContent = props.vendors.map((item) =>
 		<VendorItem key={item.key} name={item.name} userId={item.userId} isLoggedIn={props.isLoggedIn} present={item.present} itemRef={firebase.database().ref(`vendors/${item.key}`)} />
 	);
+
+	let noContent = true;
+	for (let item of props.vendors) {
+		if (props.isLoggedIn.uid === item.userId) {
+			noContent = false;
+			break;
+		}
+	}
+
+	if (noContent) {
+		vendorContent = 
+		<div className="row justify-content-center">
+			<div className="col-auto">
+				<em>You don't own any vendors. Would you like to creat a new one?</em>
+			</div>
+		</div>;
+	}
 	
 	return (
 		<div className="row">
@@ -249,7 +266,7 @@ function VendorsManaged(props) {
 						Vendors you own
 					</div>
 				</div>
-				{divString}
+				{vendorContent}
 			</div>
 		</div>
 	);
@@ -257,10 +274,27 @@ function VendorsManaged(props) {
 
 
 function MarketsManaged(props) {
-	const divString = props.markets.map((item) =>
+	let marketContent = props.markets.map((item) => 
 		<MarketItem key={item.key} name={item.name} userId={item.userId} isLoggedIn={props.isLoggedIn} itemRef={firebase.database().ref(`markets/${item.key}`)} />
 	);
-			
+
+	let noContent = true;
+	for (let item of props.markets) {
+		if (props.isLoggedIn.uid === item.userId) {
+			noContent = false;
+			break;
+		}
+	}
+
+	if (noContent) {
+		marketContent = 
+		<div className="row justify-content-center">
+			<div className="col-auto">
+				<em>You don't own any markets. Would you like to creat a new one?</em>
+			</div>
+		</div>;
+	}
+
 	return (
 		<div className="row">
 			<div className="col-12">
@@ -269,7 +303,7 @@ function MarketsManaged(props) {
 						Markets you own
 					</div>
 				</div>
-				{divString}
+				{marketContent}
 			</div>
 		</div>
 	);
@@ -313,7 +347,7 @@ class CreateMarketForm extends React.Component {
 					<form onSubmit={this.handleSubmit}>
 						<div className="form-group">
 							<label htmlFor="nameInput">Market name:</label>
-							<input id="nameInput" className="form-control" type="text" value={this.state.value} onChange={this.handleChange} />
+							<input autoComplete="off" id="nameInput" className="form-control" type="text" value={this.state.value} onChange={this.handleChange} />
 						</div>
 						<div className="row justify-content-center my-4">	
 							<div className="col-auto">
@@ -383,7 +417,7 @@ class CreateVendorForm extends React.Component {
 					<form onSubmit={this.handleSubmit}>
 						<div className="form-group">
 							<label htmlFor="nameInput">Vendor name:</label>
-							<input id="nameInput" className="form-control" type="text" value={this.state.valueName} onChange={this.handleName} />
+							<input autoComplete="off" id="nameInput" className="form-control" type="text" value={this.state.valueName} onChange={this.handleName} />
 						</div>
 						<div className="form-group">
 							<label htmlFor="marketSelect">Sells at:</label>
@@ -568,27 +602,56 @@ class TabbedContainer extends React.Component {
 }
 
 
+function PublicVendorItem(props) {
+	if (props.vendorMarket === props.currentMarket) {
+		return <div>{props.name}</div>
+	} else {
+		return null;
+	}
+}
+
 
 class PublicMarketView extends React.Component {
 	constructor(props) {
 		super(props);
+		this.state = {valueMarket: ''};
+		this.handleMarket = this.handleMarket.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
+	handleMarket(event) {
+		this.setState({valueMarket: event.target.value});
+	}
 
+	handleSubmit(event) {
+		event.preventDefault();
+		//this.setState({valueMarket: ''});
+		this.props.goBack();
+	}
 
 	render() {
 	const vendorsList = this.props.vendors.map((vendor) =>
-		<div className="col-12" key={vendor.key}>{vendor.name}</div>
+		<PublicVendorItem className="col-12" key={vendor.key} name={vendor.name} vendorMarket={vendor.market} currentMarket={this.state.valueMarket}/>
 	);
 
-	const marketsList = this.props.markets.map((market) =>
-		<div className="col-12" key={market.key}>{market.name}</div>
+	const marketsList = this.props.markets.map((market) => 
+		<option key={market.key}>{market.name}</option>
 	);
 
 		return (
-			<div className="row flex-column justify-content-center text-center">
-				<h1 className="col-12">Markets:</h1>
-				{marketsList}
+			<div className="row flex-column justify-content-center">
+				<form>
+					<div className="form-group">
+						<label htmlFor="marketSelect">Choose a market:</label>
+						<select id="marketSelect" className="form-control" type="text" value={this.state.valueMarket} onChange={this.handleMarket}>
+							<option>Please choose one</option>
+							{marketsList}
+						</select>
+					</div>
+				</form>
+
+
+
 				<h1 className="col-12">Vendors:</h1>
 				{vendorsList}
 			</div>
