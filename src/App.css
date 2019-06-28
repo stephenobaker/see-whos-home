@@ -55,6 +55,14 @@
 	margin: 2em;
 }
 
+.open {
+	color: green;
+}
+
+.closed {
+	color: red;
+}
+
 .tab {
 	border-width: 2px;
 	border-color: var(--primary-light);

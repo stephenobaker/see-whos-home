@@ -604,7 +604,13 @@ class TabbedContainer extends React.Component {
 
 function PublicVendorItem(props) {
 	if (props.vendorMarket === props.currentMarket) {
-		return <div>{props.name}</div>
+		return (
+			<div className="row justify-content-center my-4">
+				<div className={'col-auto ' + (props.open ? 'open' : 'closed')}>
+					<h4>{props.name} is {props.open ? 'open!' : 'closed.'}</h4>
+				</div>
+			</div>
+		);
 	} else {
 		return null;
 	}
@@ -631,7 +637,7 @@ class PublicMarketView extends React.Component {
 
 	render() {
 	const vendorsList = this.props.vendors.map((vendor) =>
-		<PublicVendorItem className="col-12" key={vendor.key} name={vendor.name} vendorMarket={vendor.market} currentMarket={this.state.valueMarket}/>
+		<PublicVendorItem className="col-12" key={vendor.key} name={vendor.name} open={vendor.present} vendorMarket={vendor.market} currentMarket={this.state.valueMarket}/>
 	);
 
 	const marketsList = this.props.markets.map((market) => 
@@ -639,21 +645,21 @@ class PublicMarketView extends React.Component {
 	);
 
 		return (
-			<div className="row flex-column justify-content-center">
-				<form>
-					<div className="form-group">
-						<label htmlFor="marketSelect">Choose a market:</label>
-						<select id="marketSelect" className="form-control" type="text" value={this.state.valueMarket} onChange={this.handleMarket}>
-							<option>Please choose one</option>
-							{marketsList}
-						</select>
+			<div className="row justify-content-center text-center py-5">
+				<div className="col-10 col-md-6">
+					<div className="row justify-content-center">
+						<form>
+							<div className="form-group">
+								<label htmlFor="marketSelect">Choose a market:</label>
+								<select id="marketSelect" className="form-control form-control-lg" type="text" value={this.state.valueMarket} onChange={this.handleMarket}>
+									<option disabled></option>
+									{marketsList}
+								</select>
+							</div>
+						</form>
 					</div>
-				</form>
-
-
-
-				<h1 className="col-12">Vendors:</h1>
-				{vendorsList}
+					{vendorsList}
+				</div>
 			</div>
 		);	
 	}
