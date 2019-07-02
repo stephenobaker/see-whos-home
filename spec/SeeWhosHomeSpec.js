@@ -1,9 +1,61 @@
+import React from 'react';
+//import jasmineEnzyme from 'jasmine-enzyme';
+import {shallow, mount} from 'enzyme';
+
+import App from '../src/App.js';
+import SignInButtonSpan from '../src/App.js';
+import UserPicture from '../src/App.js';
+import UserWelcome from '../src/App.js';
+
+//import jasmineEnzyme from 'jasmine-enzyme';
+import { configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+
+configure({ adapter: new Adapter() });
+
+
+describe('<App />', () => {
+	/*beforeEach(() => {
+		jasmineEnzyme();
+	});*/
+
+
+
+	it('should display welcome message properly', () => {
+		const wrapper = mount(<App />);
+
+		//wrapper.setState({isWaiting: false});
+
+		console.log(wrapper.find(UserPicture).debug());
+
+		//expect(wrapper.text()).toEqual('Welcome, Josh!');
+	});
+	/*it('shouldnt have an image when signed out', () => {
+		const wrapper = mount(<NavigationBar />);
+		//expect(wrapper.find('img')).not.toExist();
+		const image = shallow(<UserPicture />);
+		console.log(image.debug());
+		expect(image).toHaveProp({ isLoggedIn: undefined });
+	});
+	it('should have an image when signed in', () => {
+		let navbar = shallow(<NavigationBar />);
+		navbar.setProps({ isLoggedIn: true});
+		//const image = mount(<UserPicture />);
+		expect(navbar).toHaveProp({ isLoggedIn: true });
+	});*/
+
+
+});
+
+
 
 //Test if you can get element by class name with one class out of many used
 
-describe('Sign-In Button', function() {
+xdescribe('Sign-In Button', function() {
 	it('should exist', function() {
-		expect(document.querySelector('.button')).not.toBeNull()
+		const wrapper = mount(<NavigationBar />);
+
+		expect(wrapper.find('div')).toExist();
 	});
 });
 
