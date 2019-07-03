@@ -4,7 +4,7 @@
   "description": "A way for vendors to physically check in or state their expected in-person time at a co-working space, and for customers to quickly see which vendors will be present in a market or co-working space during a given timeframe.",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine",
+    "test": "jest",
     "build": "webpack --mode production"
   },
   "author": "",
@@ -17,6 +17,15 @@
     "url": "https://github.com/stephenobaker/see-whos-home/issues"
   },
   "homepage": "https://github.com/stephenobaker/see-whos-home#readme",
+  "jest": {
+    "setupFilesAfterEnv": [
+      "./src/setupTests.js"
+    ],
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+    }
+  },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
     "@babel/core": "^7.1.0",
@@ -31,8 +40,10 @@
     "enzyme-adapter-react-16": "^1.14.0",
     "ignore-styles": "^5.0.1",
     "install": "^0.12.2",
+    "jest": "^24.8.0",
     "jsdom": "^15.1.1",
-    "react-addons-test-utils": "^15.6.2",
+    "react-dom": "^16.8.6",
+    "react-test-renderer": "^16.8.6",
     "style-loader": "^0.23.0",
     "webpack": "^4.19.1",
     "webpack-cli": "^3.3.4",
@@ -42,7 +53,6 @@
     "bootstrap": "^4.3.1",
     "firebase": "^6.1.1",
     "react": "^16.5.2",
-    "react-dom": "^16.5.2",
     "react-hot-loader": "^4.3.11",
     "react-with-firebase-auth": "^1.0.3"
   }
