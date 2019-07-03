@@ -1,9 +1,9 @@
 language: node_js
+npm:
+  - 6
 node_js:
-  - 8
-cache:
-  directories:
-    - node_modules
+  - 10
 script:
-  -npm run build
   -npm test
+  -npm run build
+  
