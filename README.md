@@ -1,1 +1,1 @@
-[![Build Status](https://travis-ci.com/stephenobaker/see-whos-home.svg?branch=master)]
+[![Build Status](https://travis-ci.com/stephenobaker/see-whos-home.svg?branch=master)](https://travis-ci.com/stephenobaker/see-whos-home)
