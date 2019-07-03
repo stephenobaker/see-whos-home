@@ -17,7 +17,7 @@ describe('See Who\'s Home App test', () => {
 describe('VendorItem', () => {
 	const wrapper = mount(<App />);
 	it('is open when props = open', () => {
-		expect(wrapper.find('NavigationBar').text()).toEqual("Who's at the Market?Own a business?Sign in with GoogleLoading databases...Choose a market:");
+		expect(wrapper.find('NavigationBar').text()).toEqual("Who's at the Market?Own a business?Sign in with Google");
 	});
 	it('is closed when props = closed', () => {
 
