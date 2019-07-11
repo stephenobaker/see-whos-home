@@ -4,3 +4,7 @@ A simple web-based React app built with Firebase on the backend to let individua
 
 **See a live demo [here](https://see-whos-home.firebaseapp.com).**
 
+Or look at this GIF to get an idea how it works (public view is on the left, signed in user is on the right):
+
+![](see-whos-home.gif)
+
